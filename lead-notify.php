@@ -16,9 +16,11 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $configPath = '/home/cezeridi/private/whatsapp-config.php';
+$logPath = '/home/cezeridi/private/whatsapp-lead-log.jsonl';
+
 if (!file_exists($configPath)) {
     http_response_code(500);
-    echo json_encode(['ok' => false, 'error' => 'config_missing']);
+    echo json_encode(['ok' => false, 'error' => 'config_missing', 'message' => 'whatsapp-config.php bulunamadi']);
     exit;
 }
 
@@ -27,9 +29,9 @@ $token = trim($config['token'] ?? '');
 $phoneNumberId = trim($config['phone_number_id'] ?? '');
 $recipients = $config['recipients'] ?? [];
 
-if ($token === '' || $phoneNumberId === '' || empty($recipients)) {
+if ($token === '' || $phoneNumberId === '' || empty($recipients) || !is_array($recipients)) {
     http_response_code(500);
-    echo json_encode(['ok' => false, 'error' => 'config_incomplete']);
+    echo json_encode(['ok' => false, 'error' => 'config_incomplete', 'message' => 'Token, phone_number_id veya recipients eksik']);
     exit;
 }
 
@@ -44,6 +46,18 @@ function clean_text($value) {
     $value = is_scalar($value) ? (string)$value : '';
     $value = trim(strip_tags($value));
     return mb_substr($value, 0, 1800, 'UTF-8');
+}
+
+function meta_error_text($response, $fallback = '') {
+    if (is_array($response) && isset($response['error'])) {
+        $err = $response['error'];
+        $parts = [];
+        if (!empty($err['message'])) $parts[] = $err['message'];
+        if (!empty($err['code'])) $parts[] = 'code=' . $err['code'];
+        if (!empty($err['error_subcode'])) $parts[] = 'subcode=' . $err['error_subcode'];
+        return implode(' | ', $parts);
+    }
+    return $fallback ?: 'Bilinmeyen Meta API hatasi';
 }
 
 $name = clean_text($input['name'] ?? 'Belirtilmedi');
@@ -95,20 +109,58 @@ foreach ($recipients as $recipient) {
         CURLOPT_TIMEOUT => 20
     ]);
 
-    $response = curl_exec($ch);
+    $responseText = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     $curlError = curl_error($ch);
     curl_close($ch);
 
+    $decoded = json_decode($responseText, true);
+    $ok = $httpCode >= 200 && $httpCode < 300;
     $results[] = [
         'recipient' => $recipient,
         'http_code' => $httpCode,
-        'ok' => $httpCode >= 200 && $httpCode < 300,
-        'error' => $curlError,
-        'response' => json_decode($response, true) ?: $response
+        'ok' => $ok,
+        'error' => $ok ? '' : meta_error_text($decoded, $curlError),
+        'response' => $decoded ?: $responseText
     ];
 }
 
-$allOk = !empty($results) && count(array_filter($results, fn($r) => !$r['ok'])) === 0;
-http_response_code($allOk ? 200 : 502);
-echo json_encode(['ok' => $allOk, 'results' => $results], JSON_UNESCAPED_UNICODE);
+$successCount = count(array_filter($results, fn($r) => $r['ok']));
+$totalCount = count($results);
+$failures = array_values(array_filter($results, fn($r) => !$r['ok']));
+$firstError = !empty($failures) ? ($failures[0]['recipient'] . ': ' . $failures[0]['error']) : '';
+
+$logData = [
+    'time' => date('c'),
+    'name' => $name,
+    'phone' => $phone,
+    'services' => $services,
+    'success_count' => $successCount,
+    'total_count' => $totalCount,
+    'first_error' => $firstError,
+    'results' => $results
+];
+@file_put_contents($logPath, json_encode($logData, JSON_UNESCAPED_UNICODE) . PHP_EOL, FILE_APPEND);
+
+if ($successCount > 0) {
+    http_response_code(200);
+    echo json_encode([
+        'ok' => true,
+        'partial' => $successCount < $totalCount,
+        'sent' => $successCount,
+        'total' => $totalCount,
+        'message' => $successCount < $totalCount ? "{$successCount}/{$totalCount} kisiye gonderildi" : 'Tum alicilara gonderildi',
+        'first_error' => $firstError
+    ], JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+http_response_code(502);
+echo json_encode([
+    'ok' => false,
+    'error' => 'whatsapp_send_failed',
+    'sent' => 0,
+    'total' => $totalCount,
+    'message' => $firstError ?: 'WhatsApp API gonderimi basarisiz',
+    'first_error' => $firstError
+], JSON_UNESCAPED_UNICODE);
