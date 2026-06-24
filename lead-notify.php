@@ -15,23 +15,22 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-$configPath = '/home/cezeridi/private/whatsapp-config.php';
-$logPath = '/home/cezeridi/private/whatsapp-lead-log.jsonl';
+$configPath = '/home/cezeridi/private/telegram-config.php';
+$logPath = '/home/cezeridi/private/telegram-lead-log.jsonl';
 
 if (!file_exists($configPath)) {
     http_response_code(500);
-    echo json_encode(['ok' => false, 'error' => 'config_missing', 'message' => 'whatsapp-config.php bulunamadi']);
+    echo json_encode(['ok' => false, 'error' => 'config_missing', 'message' => 'telegram-config.php bulunamadi']);
     exit;
 }
 
 $config = require $configPath;
-$token = trim($config['token'] ?? '');
-$phoneNumberId = trim($config['phone_number_id'] ?? '');
-$recipients = $config['recipients'] ?? [];
+$botToken = trim($config['bot_token'] ?? '');
+$chatIds = $config['chat_ids'] ?? [];
 
-if ($token === '' || $phoneNumberId === '' || empty($recipients) || !is_array($recipients)) {
+if ($botToken === '' || empty($chatIds) || !is_array($chatIds)) {
     http_response_code(500);
-    echo json_encode(['ok' => false, 'error' => 'config_incomplete', 'message' => 'Token, phone_number_id veya recipients eksik']);
+    echo json_encode(['ok' => false, 'error' => 'config_incomplete', 'message' => 'bot_token veya chat_ids eksik']);
     exit;
 }
 
@@ -48,16 +47,11 @@ function clean_text($value) {
     return mb_substr($value, 0, 1800, 'UTF-8');
 }
 
-function meta_error_text($response, $fallback = '') {
-    if (is_array($response) && isset($response['error'])) {
-        $err = $response['error'];
-        $parts = [];
-        if (!empty($err['message'])) $parts[] = $err['message'];
-        if (!empty($err['code'])) $parts[] = 'code=' . $err['code'];
-        if (!empty($err['error_subcode'])) $parts[] = 'subcode=' . $err['error_subcode'];
-        return implode(' | ', $parts);
+function api_error_text($response, $fallback = '') {
+    if (is_array($response) && isset($response['description'])) {
+        return (string)$response['description'];
     }
-    return $fallback ?: 'Bilinmeyen Meta API hatasi';
+    return $fallback ?: 'Bildirim API hatasi';
 }
 
 $name = clean_text($input['name'] ?? 'Belirtilmedi');
@@ -83,28 +77,25 @@ $message = "CEZERI DIGITAL YENI TALEP\n\n" .
     "AI Divani Karari:\n{$decision}\n\n" .
     "Kaynak: cezeridigital.com";
 
-$url = "https://graph.facebook.com/v25.0/{$phoneNumberId}/messages";
+$message = mb_substr($message, 0, 3900, 'UTF-8');
+$url = 'https://api.telegram.org/bot' . rawurlencode($botToken) . '/sendMessage';
 $results = [];
 
-foreach ($recipients as $recipient) {
-    $recipient = preg_replace('/\D+/', '', (string)$recipient);
-    if ($recipient === '') continue;
+foreach ($chatIds as $chatId) {
+    $chatId = trim((string)$chatId);
+    if ($chatId === '') continue;
 
     $payload = [
-        'messaging_product' => 'whatsapp',
-        'to' => $recipient,
-        'type' => 'text',
-        'text' => ['preview_url' => false, 'body' => $message]
+        'chat_id' => $chatId,
+        'text' => $message,
+        'disable_web_page_preview' => true
     ];
 
     $ch = curl_init($url);
     curl_setopt_array($ch, [
         CURLOPT_POST => true,
         CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_HTTPHEADER => [
-            'Authorization: Bearer ' . $token,
-            'Content-Type: application/json'
-        ],
+        CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
         CURLOPT_POSTFIELDS => json_encode($payload, JSON_UNESCAPED_UNICODE),
         CURLOPT_TIMEOUT => 20
     ]);
@@ -115,12 +106,12 @@ foreach ($recipients as $recipient) {
     curl_close($ch);
 
     $decoded = json_decode($responseText, true);
-    $ok = $httpCode >= 200 && $httpCode < 300;
+    $ok = $httpCode >= 200 && $httpCode < 300 && is_array($decoded) && !empty($decoded['ok']);
     $results[] = [
-        'recipient' => $recipient,
+        'chat_id' => $chatId,
         'http_code' => $httpCode,
         'ok' => $ok,
-        'error' => $ok ? '' : meta_error_text($decoded, $curlError),
+        'error' => $ok ? '' : api_error_text($decoded, $curlError),
         'response' => $decoded ?: $responseText
     ];
 }
@@ -128,7 +119,7 @@ foreach ($recipients as $recipient) {
 $successCount = count(array_filter($results, fn($r) => $r['ok']));
 $totalCount = count($results);
 $failures = array_values(array_filter($results, fn($r) => !$r['ok']));
-$firstError = !empty($failures) ? ($failures[0]['recipient'] . ': ' . $failures[0]['error']) : '';
+$firstError = !empty($failures) ? ($failures[0]['chat_id'] . ': ' . $failures[0]['error']) : '';
 
 $logData = [
     'time' => date('c'),
@@ -149,7 +140,7 @@ if ($successCount > 0) {
         'partial' => $successCount < $totalCount,
         'sent' => $successCount,
         'total' => $totalCount,
-        'message' => $successCount < $totalCount ? "{$successCount}/{$totalCount} kisiye gonderildi" : 'Tum alicilara gonderildi',
+        'message' => $successCount < $totalCount ? "{$successCount}/{$totalCount} kisiye iletildi" : 'Talep ekibe iletildi',
         'first_error' => $firstError
     ], JSON_UNESCAPED_UNICODE);
     exit;
@@ -158,9 +149,9 @@ if ($successCount > 0) {
 http_response_code(502);
 echo json_encode([
     'ok' => false,
-    'error' => 'whatsapp_send_failed',
+    'error' => 'team_notification_failed',
     'sent' => 0,
     'total' => $totalCount,
-    'message' => $firstError ?: 'WhatsApp API gonderimi basarisiz',
+    'message' => $firstError ?: 'Ekip bildirimi basarisiz',
     'first_error' => $firstError
 ], JSON_UNESCAPED_UNICODE);
