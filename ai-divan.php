@@ -7,64 +7,63 @@ if (!$GEMINI_API_KEY || $GEMINI_API_KEY === 'BURAYA_GEMINI_API_KEY_YAZ') {
   echo json_encode(['ok' => false, 'error' => 'Gemini API anahtari config.php icinde tanimli degil.'], JSON_UNESCAPED_UNICODE);
   exit;
 }
-
 if (!function_exists('curl_init')) {
   http_response_code(500);
   echo json_encode(['ok' => false, 'error' => 'PHP cURL kapali.'], JSON_UNESCAPED_UNICODE);
   exit;
 }
 
-$raw = file_get_contents('php://input');
-$input = json_decode($raw, true);
+$input = json_decode(file_get_contents('php://input'), true);
 $project = trim((string)($input['project'] ?? ''));
-
 if (mb_strlen($project, 'UTF-8') < 8) {
   http_response_code(400);
   echo json_encode(['ok' => false, 'error' => 'Proje detayi eksik.'], JSON_UNESCAPED_UNICODE);
   exit;
 }
-
-$project = mb_substr($project, 0, 6000, 'UTF-8');
+$project = mb_substr($project, 0, 7000, 'UTF-8');
 
 $prompt = <<<PROMPT
-Sen Cezeri Digital sitesindeki profesyonel AI Divani'sin. Müşteri talebini analiz edip hem müşteriye güven veren hem de ekibin uygulanabilir proje planı çıkarabileceği kapsamlı bir sonuç üret.
+Cezeri Digital icin profesyonel AI Proje Divani gibi davran. Amacin musteri talebini analiz edip uygulanabilir proje dosyasi, musteri ozeti ve ekip brifi cikarmak.
 
-ÖNEMLİ KURALLAR:
-- Yanıtı SADECE geçerli JSON olarak döndür. Markdown, açıklama, kod bloğu kullanma.
-- Kişisel telefon numarasını veya özel bilgileri divan metninde tekrar etme. Gerekirse "müşteri" de.
-- Divanda Vedat Barut adını kullanma. Son kararı "Cezeri Kurulu - Son Karar" olarak yaz.
-- Her karakter boş konuşmasın; somut öneri, kapsam, risk, içerik, tasarım, teknik ve pazarlama değeri versin.
-- Türkçe yaz. Cümleler kısa, profesyonel ve satışa dönük olsun.
-- Hizmet kapsamı belirsizse varsayım yap ama "varsayım" diye açık belirt.
+Kurallar:
+- Sadece gecerli JSON dondur.
+- Vedat Barut adini kullanma. Son karar karakteri "Cezeri Kurulu - Son Karar" olsun.
+- Genel konusma yapma; somut kapsam, eksik bilgi, risk, paket ve aksiyon yaz.
+- Fiyat verme; paket seviyesi oner.
+- Turkce yaz.
 
-JSON ŞEMASI:
+JSON semasi:
 {
-  "responses": [
-    {"key":"cezeri", "title":"Cezeri - Baş Mühendis", "text":"..."},
-    {"key":"mimar", "title":"Mimar Sinan - Tasarım Direktörü", "text":"..."},
-    {"key":"farabi", "title":"Farabi - Yazılım Mimarı", "text":"..."},
-    {"key":"tonyukuk", "title":"Tonyukuk - Pazarlama Uzmanı", "text":"..."},
-    {"key":"vedat", "title":"Cezeri Kurulu - Son Karar", "text":"..."}
+  "responses":[
+    {"key":"cezeri","title":"Cezeri - Strateji ve Kapsam","text":"..."},
+    {"key":"mimar","title":"Mimar Sinan - Tasarim ve Marka Dili","text":"..."},
+    {"key":"farabi","title":"Farabi - Teknik Plan","text":"..."},
+    {"key":"tonyukuk","title":"Tonyukuk - Pazarlama ve Donusum","text":"..."},
+    {"key":"vedat","title":"Cezeri Kurulu - Son Karar","text":"..."}
   ],
-  "final":"..."
+  "customerSummary":"Musteriye gosterilecek sade ozet.",
+  "teamBrief":"Ekibe gidecek detayli is brifi.",
+  "projectFile":{
+    "projectType":"...",
+    "recommendedPackage":"...",
+    "budgetLevel":"...",
+    "urgency":"...",
+    "scope":["..."],
+    "stages":["..."],
+    "missingInfo":["..."],
+    "risks":["..."],
+    "upsellOpportunities":["..."],
+    "nextStep":"..."
+  },
+  "final":"Baslikli proje dosyasi: Proje Ozeti, Onerilen Paket, Kapsam, Teslim Asamalari, Eksik Bilgiler, Ekip Notu, Musteriye Sonraki Adim."
 }
 
-HER KARAKTERİN ROLÜ:
-1. Cezeri: ihtiyacı özetle, proje hedefini, ana modülleri ve öncelikleri çıkar.
-2. Mimar Sinan: görsel dil, kullanıcı deneyimi, mobil düzen, güven veren vitrin ve marka hissini planla.
-3. Farabi: teknik yapı, sayfa mimarisi, hız, SEO, form/bildirim sistemi ve bakım planını çıkar.
-4. Tonyukuk: hedef müşteri, reklam mesajı, sosyal medya, dönüşüm ve içerik stratejisini çıkar.
-5. Cezeri Kurulu: uygulanabilir paket, teslim aşamaları, ekip notu, müşteri için net sonraki adımı yaz.
+Rol dagilimi:
+Cezeri kapsam ve oncelik; Mimar tasarim ve marka dili; Farabi teknik plan; Tonyukuk pazarlama ve donusum; Cezeri Kurulu uygulanabilir son karar.
 
-FINAL ALANI ŞU BAŞLIKLARI İÇERSİN:
-Proje Özeti
-Önerilen Paket
-Kapsam
-Teslim Aşamaları
-Ekibin Notu
-Müşteriye Sonraki Adım
+Paketler: Acil MVP Web Paketi, Ekonomik Baslangic Paketi, Profesyonel Web Vitrini Paketi, Premium Marka Vitrini Paketi, Marka Kurulum Paketi, Icerik Uretim Paketi.
 
-MÜŞTERİ TALEBİ:
+Musteri talebi:
 $project
 PROMPT;
 
@@ -74,8 +73,8 @@ $payload = [
     'parts' => [['text' => $prompt]]
   ]],
   'generationConfig' => [
-    'maxOutputTokens' => 1600,
-    'temperature' => 0.35,
+    'maxOutputTokens' => 2200,
+    'temperature' => 0.32,
     'responseMimeType' => 'application/json'
   ]
 ];
@@ -90,7 +89,7 @@ curl_setopt_array($ch, [
     'x-goog-api-key: ' . $GEMINI_API_KEY
   ],
   CURLOPT_POSTFIELDS => json_encode($payload, JSON_UNESCAPED_UNICODE),
-  CURLOPT_TIMEOUT => 45
+  CURLOPT_TIMEOUT => 50
 ]);
 $result = curl_exec($ch);
 $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -102,43 +101,35 @@ if ($result === false) {
   echo json_encode(['ok' => false, 'error' => $error ?: 'Gemini istegi basarisiz.'], JSON_UNESCAPED_UNICODE);
   exit;
 }
-
 $data = json_decode($result, true);
 if ($httpCode < 200 || $httpCode >= 300) {
   http_response_code(502);
-  echo json_encode([
-    'ok' => false,
-    'error' => $data['error']['message'] ?? ('Gemini HTTP ' . $httpCode),
-    'status' => $data['error']['status'] ?? null,
-    'code' => $data['error']['code'] ?? null
-  ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+  echo json_encode(['ok' => false, 'error' => $data['error']['message'] ?? ('Gemini HTTP ' . $httpCode)], JSON_UNESCAPED_UNICODE);
   exit;
 }
 
-$text = $data['candidates'][0]['content']['parts'][0]['text'] ?? '';
-$text = trim($text);
+$text = trim($data['candidates'][0]['content']['parts'][0]['text'] ?? '');
 $text = preg_replace('/^```json\s*/iu', '', $text);
 $text = preg_replace('/^```\s*/u', '', $text);
 $text = preg_replace('/\s*```$/u', '', $text);
 $out = json_decode($text, true);
-
 if (!is_array($out) || empty($out['responses']) || empty($out['final'])) {
   http_response_code(502);
   echo json_encode(['ok' => false, 'error' => 'AI yaniti beklenen JSON formatinda degil.'], JSON_UNESCAPED_UNICODE);
   exit;
 }
 
-$allowed = ['cezeri', 'mimar', 'farabi', 'tonyukuk', 'vedat'];
-$fixedResponses = [];
-foreach ($out['responses'] as $i => $item) {
-  $fixedResponses[] = [
-    'key' => $allowed[$i] ?? ($item['key'] ?? 'cezeri'),
-    'title' => trim((string)($item['title'] ?? 'Divan Uyesi')),
-    'text' => trim((string)($item['text'] ?? ''))
-  ];
+$keys = ['cezeri','mimar','farabi','tonyukuk','vedat'];
+$titles = ['Cezeri - Strateji ve Kapsam','Mimar Sinan - Tasarim ve Marka Dili','Farabi - Teknik Plan','Tonyukuk - Pazarlama ve Donusum','Cezeri Kurulu - Son Karar'];
+$fixed = [];
+for ($i = 0; $i < 5; $i++) {
+  $item = $out['responses'][$i] ?? [];
+  $fixed[] = ['key'=>$keys[$i], 'title'=>trim((string)($item['title'] ?? $titles[$i])), 'text'=>trim((string)($item['text'] ?? ''))];
 }
-
-$out['responses'] = array_slice($fixedResponses, 0, 5);
+$out['responses'] = $fixed;
+$out['customerSummary'] = trim((string)($out['customerSummary'] ?? ''));
+$out['teamBrief'] = trim((string)($out['teamBrief'] ?? ''));
+$out['projectFile'] = is_array($out['projectFile'] ?? null) ? $out['projectFile'] : [];
 $out['final'] = trim((string)$out['final']);
 $out['ok'] = true;
 
