@@ -1,0 +1,193 @@
+
+(() => {
+  const members = [
+    { key: 'cezeri', label: '⚙️ Cezeri - Baş Mühendis', short: 'Cezeri' },
+    { key: 'mimar', label: '🎨 Mimar Sinan - Tasarım Direktörü', short: 'Mimar Sinan' },
+    { key: 'farabi', label: '💻 Farabi - Yazılım Mimarı', short: 'Farabi' },
+    { key: 'tonyukuk', label: '📢 Tonyukuk - Pazarlama Uzmanı', short: 'Tonyukuk' },
+    { key: 'vedat', label: '👑 Vedat Barut - Kurucu', short: 'Vedat Barut' }
+  ];
+
+  const startButton = document.getElementById('startCouncil');
+  if (!startButton) return;
+  const clearButton = document.getElementById('clearCouncil');
+  const copyButton = document.getElementById('copyReport');
+  const whatsappShare = document.getElementById('whatsappShare');
+  const voiceToggle = document.getElementById('voiceToggle');
+  const liveStep = document.getElementById('liveStep');
+  const input = document.getElementById('projectInput');
+  const log = document.getElementById('councilLog');
+  const aiStatus = document.getElementById('aiStatus');
+  let lastReportText = '';
+  let voiceEnabled = false;
+
+  function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+  function escapeHtml(str) { return String(str || '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
+  let voicesReady = false;
+  function loadVoices(){
+    return new Promise(resolve => {
+      if (!('speechSynthesis' in window)) { resolve([]); return; }
+      let voices = window.speechSynthesis.getVoices();
+      if (voices && voices.length) { voicesReady = true; resolve(voices); return; }
+      const done = () => { voicesReady = true; resolve(window.speechSynthesis.getVoices() || []); };
+      window.speechSynthesis.onvoiceschanged = done;
+      setTimeout(done, 700);
+    });
+  }
+  function pickTurkishVoice(voices){
+    voices = voices || window.speechSynthesis?.getVoices?.() || [];
+    return voices.find(v => /tr[-_]?TR/i.test(v.lang)) || voices.find(v => /tr/i.test(v.lang)) || voices.find(v => /Google Türkçe|Turkish|Yelda|Filiz/i.test(v.name)) || null;
+  }
+  function unlockSpeech(){
+    if (!('speechSynthesis' in window)) return;
+    try {
+      const u = new SpeechSynthesisUtterance('Ses hazır.');
+      u.lang = 'tr-TR';
+      u.volume = 0.01;
+      u.rate = 1;
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(u);
+      setTimeout(() => window.speechSynthesis.cancel(), 180);
+    } catch(_) {}
+  }
+  function getCard(key) { return document.querySelector(`.member-card[data-key="${key}"]`); }
+  function clearActive() { document.querySelectorAll('.member-card').forEach(el => el.classList.remove('active','thinking','speaking')); }
+  function setStep(text) { if (liveStep) liveStep.textContent = text; }
+  function setBubble(key, text) {
+    document.querySelectorAll('.member-card .bubble').forEach(b => b.textContent = '');
+    const card = getCard(key); if (!card) return;
+    const bubble = card.querySelector('.bubble');
+    if (bubble) bubble.textContent = text;
+  }
+  function activate(key, state='active') {
+    clearActive();
+    const card = getCard(key);
+    if (card) card.classList.add('active', state);
+  }
+  async function speak(text) {
+    if (!voiceEnabled || !('speechSynthesis' in window)) return;
+    const clean = String(text || '').replace(/[⚙️🎨💻📢👑📜📌]/g,'').replace(/\s+/g,' ').trim();
+    if (!clean) return;
+    const voices = await loadVoices();
+    const selectedVoice = pickTurkishVoice(voices);
+
+    // Instagram iç tarayıcısı ve bazı Android WebView'lerde Web Speech hiç çalışmayabiliyor.
+    if (/Instagram|FBAN|FBAV|Line\//i.test(navigator.userAgent) && !selectedVoice) {
+      setStep('Ses için Chrome’da açmanız gerekebilir');
+      await sleep(900);
+      return;
+    }
+
+    window.speechSynthesis.cancel();
+    const chunks = clean.match(/[^.!?]+[.!?]?/g) || [clean];
+    for (const chunk of chunks) {
+      const sentence = chunk.trim();
+      if (!sentence) continue;
+      await new Promise(resolve => {
+        const u = new SpeechSynthesisUtterance(sentence);
+        if (selectedVoice) u.voice = selectedVoice;
+        u.lang = selectedVoice?.lang || 'tr-TR';
+        u.rate = 0.78;
+        u.pitch = 0.96;
+        u.volume = 1;
+        let done = false;
+        const finish = () => { if (!done) { done = true; setTimeout(resolve, 260); } };
+        u.onend = finish;
+        u.onerror = finish;
+        window.speechSynthesis.resume();
+        window.speechSynthesis.speak(u);
+        // Bazı mobil tarayıcılarda onend gelmez; bu yedek zamanlayıcı karakter geçişini kilitlemesin.
+        setTimeout(finish, Math.max(7000, sentence.length * 150));
+      });
+    }
+  }
+  function updateShareLinks() {
+    const message = encodeURIComponent(`Cezeri Divanı Proje Raporu\n\n${lastReportText}`.trim());
+    if (whatsappShare) whatsappShare.href = `https://wa.me/905384272486?text=${message}`;
+  }
+  function addMessage(title, body, final = false, extraClass = '') {
+    const div = document.createElement('div');
+    div.className = `${final ? 'message final' : 'message'} ${extraClass}`.trim();
+    div.innerHTML = `<strong>${escapeHtml(title)}</strong><p>${escapeHtml(body).replace(/\n/g, '<br>')}</p>`;
+    log.appendChild(div); log.scrollTop = log.scrollHeight;
+    lastReportText += `${title}\n${body}\n\n`; updateShareLinks(); return div;
+  }
+  async function typeIntoMessage(el, text, speed=12) {
+    const p = el.querySelector('p'); if (!p) return;
+    p.textContent = '';
+    for (let i=0;i<text.length;i++) { p.textContent += text[i]; if (i % 3 === 0) await sleep(speed); }
+  }
+  function localFallback(text, errorMessage = '') {
+    const lower = text.toLowerCase(); let paket = 'Cezeri Özel Proje Paketi';
+    if (lower.includes('logo')) paket = 'Marka Kimliği Paketi';
+    if (lower.includes('web') || lower.includes('site')) paket = 'Akıllı Web Site Paketi';
+    if (lower.includes('sosyal') || lower.includes('instagram')) paket = 'Sosyal Medya Büyüme Paketi';
+    if (lower.includes('oyun') || lower.includes('unity')) paket = 'Oyun & Yazılım Geliştirme Paketi';
+    return { offline:true, errorMessage,
+      responses:[
+        {key:'cezeri',title:'⚙️ Cezeri - Baş Mühendis',text:'Talebi teknik açıdan inceledim. Öncelik hızlı açılan, mobil uyumlu ve müşteriyi doğrudan iletişime yönlendiren bir yapı olmalı.'},
+        {key:'mimar',title:'🎨 Mimar Sinan - Tasarım Direktörü',text:'Görsel kimlik sade ama güçlü olmalı. Sektöre göre renk paleti, büyük başlıklar ve güven veren bir ilk ekran öneriyorum.'},
+        {key:'farabi',title:'💻 Farabi - Yazılım Mimarı',text:'WhatsApp yönlendirmesi, hızlı iletişim formu, SEO alanları ve yönetilebilir içerik yapısı eklenmeli.'},
+        {key:'tonyukuk',title:'📢 Tonyukuk - Pazarlama Uzmanı',text:'Bu proje sadece güzel görünmemeli; Google, sosyal medya ve kampanya mesajlarıyla müşteri getirmeli.'},
+        {key:'vedat',title:'👑 Vedat Barut - Kurucu',text:'Cezeri tarzında modern, dikkat çekici ve satış odaklı bir çalışma yapılmalı. Müşteriye net paket, süre ve teslim kapsamı sunalım.'}
+      ], final:`Divan kararı: ${paket} önerildi. İlk adımda ihtiyaç analizi, tasarım yönü, teknik kurulum ve pazarlama planı hazırlanacak. Son adımda iletişim üzerinden net teklif paylaşılacak.`};
+  }
+  async function callRealAI(text) {
+    const endpoints = ['api/divan.php','api/ai-divan.php','./api/divan.php'];
+    let lastError = 'AI servisi cevap vermedi.';
+    for (const endpoint of endpoints) {
+      try {
+        const response = await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({project:text}),cache:'no-store'});
+        const raw = await response.text(); let data = null; try { data=JSON.parse(raw); } catch(_){ }
+        if (response.ok && data && !data.error) return data;
+        lastError = data?.detail || data?.error || `HTTP ${response.status} - ${raw.slice(0,160)}`;
+      } catch(err) { lastError = err?.message || 'Bağlantı hatası.'; }
+    }
+    throw new Error(lastError);
+  }
+  async function renderCouncil(data) {
+    for (const item of data.responses || []) {
+      const member = members.find(m => m.key === item.key) || members[0];
+      setStep(`${member.short} düşünüyor...`); activate(item.key || member.key, 'thinking');
+      setBubble(item.key || member.key, 'Düşünüyorum...');
+      await sleep(1200);
+      setStep(`${member.short} konuşuyor`); activate(item.key || member.key, 'speaking');
+      const speechText = item.text || 'Görüş oluşturulamadı.';
+      setBubble(item.key || member.key, speechText.length > 155 ? speechText.slice(0,155) + '…' : speechText);
+      const msg = addMessage(item.title || member.label, '', false, 'live-current');
+      await typeIntoMessage(msg, speechText, 18);
+      await speak(speechText);
+      await sleep(550);
+      msg.classList.remove('live-current');
+      setBubble(item.key || member.key, '');
+    }
+    clearActive(); setStep('Divan kararı hazırlanıyor'); await sleep(1000);
+    const finalText = data.final || 'Divan kararı oluşturulamadı.';
+    const finalMsg = addMessage('📜 Divan Kararı', '', true, 'live-current');
+    await typeIntoMessage(finalMsg, finalText, 16);
+    await speak(finalText);
+    finalMsg.classList.remove('live-current');
+    setStep('Tamamlandı');
+    if (data.offline) addMessage('ℹ️ Sistem Notu', `Gerçek AI bağlantısı kurulamadı, demo cevapları gösterildi. Hata: ${String(data.errorMessage || 'Bilinmeyen hata').slice(0,220)}`, false, 'error');
+  }
+  startButton.addEventListener('click', async () => {
+    const text = input.value.trim(); if (!text) { input.focus(); return; }
+    if (voiceEnabled) { await loadVoices(); unlockSpeech(); }
+    startButton.disabled = true; startButton.textContent = 'Divan Toplanıyor...';
+    log.innerHTML = ''; lastReportText = ''; setStep('Talep alındı'); addMessage('📌 Müşteri Talebi', text);
+    try { await renderCouncil(await callRealAI(text)); }
+    catch (err) { await renderCouncil(localFallback(text, err.message)); }
+    startButton.disabled = false; startButton.textContent = 'Divanı Tekrar Topla';
+  });
+  clearButton?.addEventListener('click', () => { window.speechSynthesis?.cancel(); clearActive(); log.innerHTML='<div class="empty-state">Henüz divan toplanmadı. Talebi yaz ve ekibi çalıştır.</div>'; input.value=''; lastReportText=''; setStep('Beklemede'); updateShareLinks(); });
+  copyButton?.addEventListener('click', async () => { if (!lastReportText.trim()) return; await navigator.clipboard.writeText(`Cezeri Divanı Proje Raporu\n\n${lastReportText}`.trim()); copyButton.textContent='Kopyalandı'; setTimeout(()=>copyButton.textContent='Raporu Kopyala',1200); });
+  voiceToggle?.addEventListener('click', async () => {
+    voiceEnabled=!voiceEnabled;
+    voiceToggle.textContent = voiceEnabled ? '🔊 Ses Açık' : '🔇 Ses Kapalı';
+    voiceToggle.setAttribute('aria-pressed', voiceEnabled ? 'true' : 'false');
+    if (voiceEnabled) { const vs = await loadVoices(); unlockSpeech(); if (!vs.length) setStep('Bu tarayıcıda Türkçe ses yok / Chrome deneyin'); }
+    else window.speechSynthesis?.cancel();
+  });
+  async function checkStatus(){ try{ const res=await fetch('api/status.php',{cache:'no-store'}); const data=await res.json(); aiStatus.textContent=data.configured ? `Gerçek AI hazır (${data.model || 'Gemini'})` : 'Demo / API anahtarı bekliyor'; } catch(_){ aiStatus.textContent='Statik demo'; } }
+  checkStatus(); updateShareLinks(); setStep('Beklemede');
+})();
