@@ -2,4 +2,4 @@
 deployment:
   tasks:
     - export DEPLOYPATH=/home/cezeridi/public_html/
-    - /bin/rsync -av --exclude='.git' --exclude='.cpanel.yml' /home/cezeridi/repositories/cezeri-web-site-live/ $DEPLOYPATH
+    - /bin/cp -R * $DEPLOYPATH
