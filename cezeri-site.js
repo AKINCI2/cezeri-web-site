@@ -1,39 +1,42 @@
 (() => {
-  const header = document.querySelector('.site-header');
-  const menuToggle = document.querySelector('.menu-toggle');
-  const navLinks = document.querySelectorAll('.nav a');
-  const year = document.getElementById('year');
-  const offerForm = document.getElementById('offerForm');
-  const startCouncil = document.getElementById('startCouncil');
-  const clearCouncil = document.getElementById('clearCouncil');
-  const projectInput = document.getElementById('projectInput');
-  const councilLog = document.getElementById('councilLog');
-  const aiStatus = document.getElementById('aiStatus');
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  let finalDecision = '';
+  let notified = false;
+  let voice = null;
 
+  const year = $('#year');
   if (year) year.textContent = new Date().getFullYear();
 
-  if (menuToggle && header) {
+  const header = $('.site-header');
+  const menuToggle = $('.menu-toggle');
+  if (header && menuToggle) {
     menuToggle.addEventListener('click', () => {
-      const isOpen = header.classList.toggle('open');
-      menuToggle.setAttribute('aria-expanded', String(isOpen));
-      menuToggle.setAttribute('aria-label', isOpen ? 'Menüyü kapat' : 'Menüyü aç');
+      const open = header.classList.toggle('open');
+      menuToggle.setAttribute('aria-expanded', String(open));
     });
-    navLinks.forEach((link) => link.addEventListener('click', () => {
-      header.classList.remove('open');
-      menuToggle.setAttribute('aria-expanded', 'false');
-      menuToggle.setAttribute('aria-label', 'Menüyü aç');
-    }));
+    $$('.nav a').forEach((a) => a.addEventListener('click', () => header.classList.remove('open')));
   }
 
-  function enhanceOfferForm() {
-    if (!offerForm) return;
-    offerForm.innerHTML = `
+  const style = document.createElement('style');
+  style.textContent = `
+    #offer{display:none!important}.service-check-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:2px 0 4px}.service-check-list label,.voice-row{display:flex;align-items:center;gap:9px;padding:11px 12px;border-radius:16px;border:1px solid rgba(128,255,244,.16);background:rgba(255,255,255,.055);color:#eaffff;font-size:.92rem;line-height:1.3}.service-check-list input,.voice-row input{width:17px;height:17px;accent-color:#2ee6df}.divan-form-card input{width:100%;border:1px solid rgba(128,255,244,.16);background:rgba(255,255,255,.065);color:#fff;border-radius:18px;padding:14px 16px;outline:0}.divan-form-card input:focus,.divan-form-card textarea:focus{border-color:rgba(46,230,223,.65);box-shadow:0 0 0 4px rgba(46,230,223,.12)}.real-team{grid-template-columns:repeat(2,minmax(260px,1fr))!important;max-width:900px;margin-left:0!important}.flag-badge{width:74px;height:52px;min-width:74px;border-radius:14px;display:grid;place-items:center;font-weight:1000;color:#fff;border:1px solid rgba(128,255,244,.25);box-shadow:0 16px 42px rgba(0,0,0,.22)}.flag-badge.tr{background:#e30a17}.flag-badge.tr:before{content:'TR'}.flag-badge.az{background:linear-gradient(#00b5e2 0 33%,#ef3340 33% 66%,#509e2f 66%)}.flag-badge.az:before{content:'AZ'}.notify-ok{background:rgba(46,230,223,.12)!important;border-color:rgba(46,230,223,.35)!important}@media(max-width:820px){.service-check-list,.real-team{grid-template-columns:1fr!important}}
+  `;
+  document.head.appendChild(style);
+
+  $$('.nav-cta, a[href="#offer"]').forEach((a) => {
+    a.setAttribute('href', '#ai-divan');
+    if (a.textContent.trim() === 'Teklif Al') a.textContent = 'AI Divanı + Talep';
+  });
+
+  const divanForm = $('.divan-form-card');
+  if (divanForm) {
+    divanForm.innerHTML = `
       <label for="customerName">Ad Soyad</label>
-      <input id="customerName" name="customerName" type="text" placeholder="Müşteri adı" autocomplete="name">
-
+      <input id="customerName" type="text" placeholder="Müşteri adı" autocomplete="name">
       <label for="customerPhone">Telefon</label>
-      <input id="customerPhone" name="customerPhone" type="tel" placeholder="05xx xxx xx xx" autocomplete="tel">
-
+      <input id="customerPhone" type="tel" placeholder="05xx xxx xx xx" autocomplete="tel">
       <label>Hizmet türü listesi</label>
       <div class="service-check-list">
         <label><input type="checkbox" name="serviceType" value="Web Sitesi"> Web Sitesi</label>
@@ -45,185 +48,145 @@
         <label><input type="checkbox" name="serviceType" value="AI Divanı"> AI Divanı</label>
         <label><input type="checkbox" name="serviceType" value="Diğer"> Diğer</label>
       </div>
-
-      <label for="projectMessage">Müşteri ne istiyor?</label>
-      <textarea id="projectMessage" name="projectMessage" rows="5" placeholder="Örn: Güzellik salonum için modern, mobil uyumlu, WhatsApp bağlantılı bir web sitesi istiyorum."></textarea>
-
+      <label for="projectInput">Müşteri ne istiyor?</label>
+      <textarea id="projectInput" rows="6" placeholder="Örn: Güzellik salonum için modern, mobil uyumlu, WhatsApp bağlantılı bir web sitesi istiyorum."></textarea>
       <label for="projectDeadline">İstenen süre</label>
-      <input id="projectDeadline" name="projectDeadline" type="text" placeholder="Örn: 1 hafta içinde / acil / fark etmez">
-
+      <input id="projectDeadline" type="text" placeholder="Örn: 1 hafta içinde / acil / fark etmez">
       <label for="projectBudget">Bütçe veya ek not</label>
-      <input id="projectBudget" name="projectBudget" type="text" placeholder="Varsa bütçe, renk isteği, örnek site, not vb.">
-
-      <button class="btn primary" type="submit">WhatsApp ile Gönder</button>
-      <p class="form-note">Mesaj WhatsApp'a düz metin olarak aktarılır; okunmayan sembol veya bozuk font kullanılmaz.</p>
+      <input id="projectBudget" type="text" placeholder="Varsa bütçe, renk isteği, örnek site, not vb.">
+      <label class="voice-row"><input id="voiceEnabled" type="checkbox" checked> Divan konuşmaları sesli okunsun</label>
+      <div class="divan-actions">
+        <button class="btn primary" id="startCouncil" type="button">AI Divanı Başlat ve Talebi Gönder</button>
+        <button class="btn ghost" id="clearCouncil" type="button">Temizle</button>
+      </div>
+      <p class="divan-status" id="aiStatus">Ses açık. Bilgileri doldurun; divan kararından sonra talep ekibe otomatik gider.</p>
     `;
   }
-  enhanceOfferForm();
 
-  const revealItems = document.querySelectorAll('.reveal');
+  const teamGrid = $('.team-grid');
+  if (teamGrid) {
+    teamGrid.classList.add('real-team');
+    teamGrid.innerHTML = `
+      <article class="team-card founder reveal in"><span class="flag-badge tr" aria-label="Türk Bayrağı"></span><div><h3>Vedat Barut</h3><p>Grafiker, Web Geliştirme Uzmanı, Yazılımcı ve Oyun Geliştirici.</p></div></article>
+      <article class="team-card reveal in"><span class="flag-badge az" aria-label="Azerbaycan Bayrağı"></span><div><h3>Yasir Elesgerov</h3><p>Ekip arkadaşı, üretim desteği ve dijital proje geliştirme.</p></div></article>
+    `;
+  }
+
+  const revealItems = $$('.reveal');
   if ('IntersectionObserver' in window) {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('in');
-          observer.unobserve(entry.target);
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          e.target.classList.add('in');
+          obs.unobserve(e.target);
         }
       });
     }, { threshold: 0.1 });
-    revealItems.forEach((item) => observer.observe(item));
-  } else {
-    revealItems.forEach((item) => item.classList.add('in'));
+    revealItems.forEach((x) => obs.observe(x));
+  } else revealItems.forEach((x) => x.classList.add('in'));
+
+  function val(id) { return $(`#${id}`)?.value.trim() || ''; }
+  function services() { return $$('input[name="serviceType"]:checked').map((x) => x.value); }
+  function status(text) { const s = $('#aiStatus'); if (s) s.textContent = text; }
+  function html(text) { return String(text || '').replace(/[&<>"']/g, (c) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c])); }
+
+  function projectText() {
+    return [
+      val('customerName') ? `Müşteri: ${val('customerName')}` : '',
+      val('customerPhone') ? `Telefon: ${val('customerPhone')}` : '',
+      services().length ? `Hizmet türleri: ${services().join(', ')}` : '',
+      val('projectInput') ? `Proje detayı: ${val('projectInput')}` : '',
+      val('projectDeadline') ? `İstenen süre: ${val('projectDeadline')}` : '',
+      val('projectBudget') ? `Bütçe / ek not: ${val('projectBudget')}` : ''
+    ].filter(Boolean).join('\n');
   }
 
-  function escapeHtml(value) {
-    return String(value || '').replace(/[&<>'"]/g, (char) => ({
-      '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
-    }[char]));
+  function log(title, text, final = false) {
+    const area = $('#councilLog');
+    if (!area) return;
+    $('.empty-log', area)?.remove();
+    const div = document.createElement('div');
+    div.className = final ? 'message final' : 'message';
+    div.innerHTML = `<strong>${html(title)}</strong><p>${html(text).replace(/\n/g, '<br>')}</p>`;
+    area.appendChild(div);
+    area.scrollTop = area.scrollHeight;
   }
 
-  function setStatus(text) {
-    if (aiStatus) aiStatus.textContent = text;
+  function active(key) { $$('.member-card').forEach((c) => c.classList.toggle('active', c.dataset.key === key)); }
+
+  function loadVoices() {
+    if (!('speechSynthesis' in window)) return;
+    const all = speechSynthesis.getVoices();
+    voice = all.find((v) => /^tr/i.test(v.lang) && /male|erkek|murat|ahmet|emre|tolga/i.test(v.name)) || all.find((v) => /^tr/i.test(v.lang)) || all[0] || null;
+  }
+  if ('speechSynthesis' in window) { loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
+
+  function speak(text, final = false) {
+    if (!$('#voiceEnabled')?.checked || !('speechSynthesis' in window)) return;
+    speechSynthesis.cancel(); loadVoices();
+    const u = new SpeechSynthesisUtterance(String(text || '').replace(/[⚙️🎨💻📢👑📜ℹ️]/g, '').replace(/\s+/g, ' '));
+    u.lang = 'tr-TR'; u.rate = final ? 0.86 : 0.9; u.pitch = final ? 0.72 : 0.78; u.volume = 1;
+    if (voice) u.voice = voice;
+    speechSynthesis.speak(u);
   }
 
-  function setActiveMember(key) {
-    document.querySelectorAll('.member-card').forEach((card) => {
-      card.classList.toggle('active', card.dataset.key === key);
-    });
+  function tone(final = false) {
+    try {
+      const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
+      const ctx = new AC(); let t = ctx.currentTime + .02;
+      const notes = final ? [440,523,587,659,587,523,494,440] : [392,494,587];
+      notes.forEach((n) => { const o = ctx.createOscillator(), g = ctx.createGain(); o.type = final ? 'sawtooth' : 'triangle'; o.frequency.value = n; g.gain.value = final ? .035 : .04; o.connect(g).connect(ctx.destination); o.start(t); o.stop(t + .16); t += .18; });
+      setTimeout(() => ctx.close(), 2200);
+    } catch (_) {}
   }
 
-  function clearActiveMembers() {
-    document.querySelectorAll('.member-card').forEach((card) => card.classList.remove('active'));
-  }
-
-  function resetCouncilLog() {
-    if (!councilLog) return;
-    councilLog.innerHTML = '<div class="empty-log">Divan sonucu burada görünecek.</div>';
-  }
-
-  function addMessage(title, text, final = false) {
-    if (!councilLog) return;
-    const empty = councilLog.querySelector('.empty-log');
-    if (empty) empty.remove();
-    const item = document.createElement('div');
-    item.className = final ? 'message final' : 'message';
-    item.innerHTML = `<strong>${escapeHtml(title)}</strong><p>${escapeHtml(text).replace(/\n/g, '<br>')}</p>`;
-    councilLog.appendChild(item);
-    councilLog.scrollTop = councilLog.scrollHeight;
-  }
-
-  function localFallback(text, errorMessage = '') {
-    const lower = text.toLocaleLowerCase('tr-TR');
-    let paket = 'Cezeri Özel Proje Paketi';
-    if (lower.includes('logo')) paket = 'Logo & Marka Kimliği Paketi';
-    if (lower.includes('web') || lower.includes('site')) paket = 'Akıllı Web Site Paketi';
-    if (lower.includes('sosyal') || lower.includes('instagram')) paket = 'Sosyal Medya Büyüme Paketi';
-    if (lower.includes('video') || lower.includes('klip')) paket = 'Video & Klip Üretim Paketi';
-    return {
-      offline: true,
-      errorMessage,
-      responses: [
-        { key: 'cezeri', title: '⚙️ Cezeri - Baş Mühendis', text: 'Öncelik hızlı açılan, mobil uyumlu ve net iletişime yönlendiren bir sistem olmalı.' },
-        { key: 'mimar', title: '🎨 Mimar Sinan - Tasarım Direktörü', text: 'Görsel dil sade, güçlü ve markaya güven veren bir vitrin gibi tasarlanmalı.' },
-        { key: 'farabi', title: '💻 Farabi - Yazılım Mimarı', text: 'WhatsApp yönlendirmesi, SEO alanları ve yönetilebilir içerik yapısı kurulmalı.' },
-        { key: 'tonyukuk', title: '📢 Tonyukuk - Pazarlama Uzmanı', text: 'Bu proje sadece güzel görünmemeli; ziyaretçiyi müşteriye çevirecek mesajlara sahip olmalı.' },
-        { key: 'vedat', title: '👑 Vedat Barut - Kurucu', text: 'Cezeri tarzında modern, dikkat çekici ve satış odaklı bir çalışma hazırlayalım.' }
-      ],
-      final: `Divan kararı: ${paket} önerildi. İlk adımda ihtiyaç analizi, tasarım yönü, teknik kurulum ve pazarlama mesajı birlikte netleştirilecek.`
-    };
+  function fallback(text) {
+    let pack = 'Cezeri Özel Proje Paketi';
+    const l = text.toLocaleLowerCase('tr-TR');
+    if (l.includes('logo')) pack = 'Logo ve Marka Kimliği Paketi';
+    if (l.includes('web') || l.includes('site')) pack = 'Akıllı Web Site Paketi';
+    if (l.includes('video') || l.includes('klip')) pack = 'Video ve Klip Üretim Paketi';
+    return { responses: [
+      { key:'cezeri', title:'Cezeri - Baş Mühendis', text:'Sistem hızlı, mobil uyumlu ve net iletişim odaklı kurulmalı.' },
+      { key:'mimar', title:'Mimar Sinan - Tasarım Direktörü', text:'Görsel dil sade, güçlü ve markaya güven veren bir vitrin gibi olmalı.' },
+      { key:'farabi', title:'Farabi - Yazılım Mimarı', text:'WhatsApp bildirimi, SEO alanları ve yönetilebilir içerik yapısı kurulmalı.' },
+      { key:'tonyukuk', title:'Tonyukuk - Pazarlama Uzmanı', text:'Mesajlar ziyaretçiyi müşteriye çevirecek şekilde yazılmalı.' },
+      { key:'vedat', title:'Vedat Barut - Kurucu', text:'Modern, dikkat çekici ve satış odaklı bir paket hazırlanmalı.' }
+    ], final:`Divan kararı: ${pack} önerildi. Tasarım, teknik kurulum ve pazarlama mesajı birlikte hazırlanacak.` };
   }
 
   async function callAI(text) {
-    const endpoints = ['ai-divan.php', 'divan.php', 'api/ai-divan.php', 'api/divan.php'];
-    let lastError = '';
-    for (const endpoint of endpoints) {
-      try {
-        const response = await fetch(endpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ project: text })
-        });
-        const raw = await response.text();
-        let data = null;
-        try { data = JSON.parse(raw); } catch (_) {}
-        if (response.ok && data && Array.isArray(data.responses) && data.final) return data;
-        lastError = data?.error || data?.detail || raw || `HTTP ${response.status}`;
-      } catch (error) {
-        lastError = error.message || 'Bağlantı hatası';
-      }
-    }
-    return localFallback(text, lastError);
+    try {
+      const r = await fetch('ai-divan.php', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ project:text }) });
+      const d = await r.json();
+      if (d && Array.isArray(d.responses) && d.final) return d;
+    } catch (_) {}
+    return fallback(text);
+  }
+
+  async function notifyLead() {
+    const payload = { name:val('customerName'), phone:val('customerPhone'), services:services(), detail:val('projectInput'), deadline:val('projectDeadline'), budget:val('projectBudget'), decision:finalDecision };
+    const r = await fetch('lead-notify.php', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok || !d.ok) throw new Error(d.error || 'notification_failed');
   }
 
   async function runCouncil() {
-    if (!projectInput || !councilLog || !startCouncil) return;
-    const text = projectInput.value.trim();
-    if (text.length < 8) {
-      setStatus('Lütfen proje talebini biraz daha açıklayıcı yaz.');
-      projectInput.focus();
-      return;
-    }
-    startCouncil.disabled = true;
-    startCouncil.textContent = 'Divan çalışıyor...';
-    resetCouncilLog();
-    setStatus('AI Divanı proje talebini inceliyor...');
-
-    const data = await callAI(text);
-    if (data.offline && data.errorMessage) {
-      addMessage('ℹ️ Sistem Notu', `Gerçek AI bağlantısı kurulamadı, demo cevapları gösterildi. Hata: ${data.errorMessage}`);
-    }
-
-    const responses = Array.isArray(data.responses) ? data.responses : [];
-    for (const item of responses) {
-      setActiveMember(item.key);
-      setStatus(`${item.title || item.key} görüş bildiriyor...`);
-      addMessage(item.title || item.key || 'Divan Üyesi', item.text || '');
-      await new Promise((resolve) => setTimeout(resolve, 450));
-    }
-    clearActiveMembers();
-    if (data.final) addMessage('📜 Divan Kararı', data.final, true);
-    setStatus('Divan tamamlandı. Sonucu inceleyebilirsiniz.');
-    startCouncil.disabled = false;
-    startCouncil.textContent = 'Divanı Başlat';
+    const start = $('#startCouncil');
+    if (val('projectInput').length < 8) { status('Lütfen müşterinin ne istediğini biraz daha açıklayıcı yaz.'); $('#projectInput')?.focus(); return; }
+    notified = false; finalDecision = ''; tone(false); speak('Cezeri AI Divanı başladı. Proje talebi inceleniyor.');
+    if (start) { start.disabled = true; start.textContent = 'Divan çalışıyor...'; }
+    const area = $('#councilLog'); if (area) area.innerHTML = '<div class="empty-log">Divan sonucu burada görünecek.</div>';
+    status('AI Divanı proje talebini inceliyor...');
+    const data = await callAI(projectText());
+    for (const item of data.responses || []) { active(item.key); log(item.title || item.key, item.text || ''); speak(`${item.title || ''}. ${item.text || ''}`); await sleep(1700); }
+    active(''); finalDecision = data.final || ''; tone(true); log('Divan Kararı', finalDecision, true); speak('Divan kararı. ' + finalDecision, true);
+    status('Divan tamamlandı. Talep ekibe gönderiliyor...');
+    try { await notifyLead(); notified = true; log('Talep Alındı', 'Bilgiler Vedat ve Yasir WhatsApp hattına otomatik iletildi.', true); status('Talebiniz alındı. Cezeri Digital ekibi sizinle iletişime geçecek.'); }
+    catch (err) { log('Bildirim Hatası', 'Talep oluşturuldu fakat WhatsApp bildirimi gönderilemedi. Lütfen daha sonra tekrar deneyin.', true); status('Bildirim gönderilemedi. Sunucu ayarlarını kontrol edin.'); }
+    if (start) { start.disabled = false; start.textContent = notified ? 'Tekrar Gönder / Yeniden Başlat' : 'AI Divanı Başlat ve Talebi Gönder'; }
   }
 
-  if (startCouncil) startCouncil.addEventListener('click', runCouncil);
-  if (clearCouncil) clearCouncil.addEventListener('click', () => {
-    if (projectInput) projectInput.value = '';
-    resetCouncilLog();
-    clearActiveMembers();
-    setStatus('Hazır. Proje detayını yazıp başlatabilirsiniz.');
-  });
-
-  if (offerForm) {
-    offerForm.addEventListener('submit', (event) => {
-      event.preventDefault();
-      const customerName = document.getElementById('customerName')?.value.trim() || 'Belirtilmedi';
-      const customerPhone = document.getElementById('customerPhone')?.value.trim() || 'Belirtilmedi';
-      const detail = document.getElementById('projectMessage')?.value.trim() || 'Belirtilmedi';
-      const deadline = document.getElementById('projectDeadline')?.value.trim() || 'Belirtilmedi';
-      const budget = document.getElementById('projectBudget')?.value.trim() || 'Belirtilmedi';
-      const selectedServices = Array.from(document.querySelectorAll('input[name="serviceType"]:checked')).map((input) => input.value);
-      const services = selectedServices.length ? selectedServices.join(', ') : 'Belirtilmedi';
-
-      const message = [
-        'CEZERI DIGITAL TEKLIF TALEBI',
-        '',
-        `Ad Soyad: ${customerName}`,
-        `Telefon: ${customerPhone}`,
-        `Hizmet Turu: ${services}`,
-        '',
-        'Musteri Ne Istiyor:',
-        detail,
-        '',
-        `Istenen Sure: ${deadline}`,
-        `Butce / Ek Not: ${budget}`,
-        '',
-        'Kaynak: cezeridigital.com'
-      ].join('\r\n');
-
-      const params = new URLSearchParams({ text: message });
-      window.open(`https://wa.me/905384272486?${params.toString()}`, '_blank', 'noopener,noreferrer');
-    });
-  }
+  $('#startCouncil')?.addEventListener('click', runCouncil);
+  $('#clearCouncil')?.addEventListener('click', () => location.reload());
 })();
