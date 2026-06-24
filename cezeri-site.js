@@ -4,8 +4,6 @@
   const navLinks = document.querySelectorAll('.nav a');
   const year = document.getElementById('year');
   const offerForm = document.getElementById('offerForm');
-  const projectType = document.getElementById('projectType');
-  const projectMessage = document.getElementById('projectMessage');
   const startCouncil = document.getElementById('startCouncil');
   const clearCouncil = document.getElementById('clearCouncil');
   const projectInput = document.getElementById('projectInput');
@@ -26,6 +24,42 @@
       menuToggle.setAttribute('aria-label', 'Menüyü aç');
     }));
   }
+
+  function enhanceOfferForm() {
+    if (!offerForm) return;
+    offerForm.innerHTML = `
+      <label for="customerName">Ad Soyad</label>
+      <input id="customerName" name="customerName" type="text" placeholder="Müşteri adı" autocomplete="name">
+
+      <label for="customerPhone">Telefon</label>
+      <input id="customerPhone" name="customerPhone" type="tel" placeholder="05xx xxx xx xx" autocomplete="tel">
+
+      <label>Hizmet türü listesi</label>
+      <div class="service-check-list">
+        <label><input type="checkbox" name="serviceType" value="Web Sitesi"> Web Sitesi</label>
+        <label><input type="checkbox" name="serviceType" value="Logo ve Kurumsal Kimlik"> Logo ve Kurumsal Kimlik</label>
+        <label><input type="checkbox" name="serviceType" value="Dijital Tasarım"> Dijital Tasarım</label>
+        <label><input type="checkbox" name="serviceType" value="Video ve Klip"> Video ve Klip</label>
+        <label><input type="checkbox" name="serviceType" value="AI Müzik ve Şarkı"> AI Müzik ve Şarkı</label>
+        <label><input type="checkbox" name="serviceType" value="Sosyal Medya İçeriği"> Sosyal Medya İçeriği</label>
+        <label><input type="checkbox" name="serviceType" value="AI Divanı"> AI Divanı</label>
+        <label><input type="checkbox" name="serviceType" value="Diğer"> Diğer</label>
+      </div>
+
+      <label for="projectMessage">Müşteri ne istiyor?</label>
+      <textarea id="projectMessage" name="projectMessage" rows="5" placeholder="Örn: Güzellik salonum için modern, mobil uyumlu, WhatsApp bağlantılı bir web sitesi istiyorum."></textarea>
+
+      <label for="projectDeadline">İstenen süre</label>
+      <input id="projectDeadline" name="projectDeadline" type="text" placeholder="Örn: 1 hafta içinde / acil / fark etmez">
+
+      <label for="projectBudget">Bütçe veya ek not</label>
+      <input id="projectBudget" name="projectBudget" type="text" placeholder="Varsa bütçe, renk isteği, örnek site, not vb.">
+
+      <button class="btn primary" type="submit">WhatsApp ile Gönder</button>
+      <p class="form-note">Mesaj WhatsApp'a düz metin olarak aktarılır; okunmayan sembol veya bozuk font kullanılmaz.</p>
+    `;
+  }
+  enhanceOfferForm();
 
   const revealItems = document.querySelectorAll('.reveal');
   if ('IntersectionObserver' in window) {
@@ -164,14 +198,32 @@
   if (offerForm) {
     offerForm.addEventListener('submit', (event) => {
       event.preventDefault();
-      const type = projectType ? projectType.value.trim() : 'Dijital proje';
-      const detail = projectMessage ? projectMessage.value.trim() : '';
+      const customerName = document.getElementById('customerName')?.value.trim() || 'Belirtilmedi';
+      const customerPhone = document.getElementById('customerPhone')?.value.trim() || 'Belirtilmedi';
+      const detail = document.getElementById('projectMessage')?.value.trim() || 'Belirtilmedi';
+      const deadline = document.getElementById('projectDeadline')?.value.trim() || 'Belirtilmedi';
+      const budget = document.getElementById('projectBudget')?.value.trim() || 'Belirtilmedi';
+      const selectedServices = Array.from(document.querySelectorAll('input[name="serviceType"]:checked')).map((input) => input.value);
+      const services = selectedServices.length ? selectedServices.join(', ') : 'Belirtilmedi';
+
       const message = [
-        'Merhaba Cezeri Digital, teklif almak istiyorum.',
-        `Hizmet türü: ${type}`,
-        detail ? `Proje detayı: ${detail}` : 'Proje detayı: Görüşmede anlatacağım.'
-      ].join('\n');
-      window.open(`https://wa.me/905384272486?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
+        'CEZERI DIGITAL TEKLIF TALEBI',
+        '',
+        `Ad Soyad: ${customerName}`,
+        `Telefon: ${customerPhone}`,
+        `Hizmet Turu: ${services}`,
+        '',
+        'Musteri Ne Istiyor:',
+        detail,
+        '',
+        `Istenen Sure: ${deadline}`,
+        `Butce / Ek Not: ${budget}`,
+        '',
+        'Kaynak: cezeridigital.com'
+      ].join('\r\n');
+
+      const params = new URLSearchParams({ text: message });
+      window.open(`https://wa.me/905384272486?${params.toString()}`, '_blank', 'noopener,noreferrer');
     });
   }
 })();
