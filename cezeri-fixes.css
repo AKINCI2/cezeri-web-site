@@ -63,6 +63,29 @@ section{scroll-margin-top:120px}
   box-shadow:0 0 0 4px rgba(46,230,223,.08),0 18px 48px rgba(46,230,223,.13);
 }
 
+/* Ana başlık: bölge adı kullanmadan genel marka mesajı */
+.hero-copy h1{
+  font-size:0!important;
+  line-height:.95!important;
+}
+.hero-copy h1 span{display:none!important}
+.hero-copy h1::before{
+  content:"Web tasarım, logo ve";
+  display:block;
+  color:#f3ffff;
+  font-size:clamp(3rem,7vw,6.6rem);
+  line-height:.95;
+  letter-spacing:-.07em;
+}
+.hero-copy h1::after{
+  content:"akıllı dijital üretim.";
+  display:block;
+  color:#2ee6df;
+  font-size:clamp(3rem,7vw,6.6rem);
+  line-height:.95;
+  letter-spacing:-.07em;
+}
+
 /* AI Divanı kompakt ve profesyonel görünüm */
 .ai-section{padding-top:74px!important}
 .ai-section .split-heading{margin-bottom:22px!important;align-items:end!important}
@@ -149,6 +172,8 @@ section{scroll-margin-top:120px}
   .member-card{grid-template-columns:66px 1fr!important;align-items:center!important}
   .team-card{display:grid!important;grid-template-columns:66px 1fr!important;align-items:center!important}
   .logo-symbol.big{font-size:2.2rem}
+  .hero-copy h1::before,
+  .hero-copy h1::after{font-size:clamp(2.75rem,14.2vw,4.7rem)}
   .ai-section .member-card{grid-template-columns:48px 1fr!important}
   .ai-section .member-grid{grid-template-columns:1fr!important}
   .ai-section .service-check-list{grid-template-columns:1fr!important}
