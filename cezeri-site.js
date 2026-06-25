@@ -7,6 +7,28 @@
   let notified = false;
   let voice = null;
 
+  function setMeta(name, content, attr = 'name') {
+    let tag = document.head.querySelector(`meta[${attr}="${name}"]`);
+    if (!tag) {
+      tag = document.createElement('meta');
+      tag.setAttribute(attr, name);
+      document.head.appendChild(tag);
+    }
+    tag.setAttribute('content', content);
+  }
+  document.title = 'Cezeri Digital | Web Tasarım, Logo, Sosyal Medya ve AI Proje Divanı';
+  setMeta('description', 'Cezeri Digital; Türkiye geneli için web sitesi, logo tasarımı, sosyal medya içerikleri, video-klip, AI müzik ve akıllı proje analizi üretir.');
+  setMeta('og:title', 'Cezeri Digital | Web Tasarım ve Dijital İçerik Üretimi', 'property');
+  setMeta('og:description', 'Web sitesi, logo, sosyal medya tasarımı, video-klip, AI müzik ve AI Proje Divanı ile markanız için dijital çözüm üretiriz.', 'property');
+
+  function trackEvent(name, params = {}) {
+    try {
+      if (typeof window.gtag === 'function') {
+        window.gtag('event', name, { event_category: 'cezeri_site', ...params });
+      }
+    } catch (_) {}
+  }
+
   const year = $('#year');
   if (year) year.textContent = new Date().getFullYear();
 
@@ -19,6 +41,10 @@
     });
     $$('.nav a').forEach((a) => a.addEventListener('click', () => header.classList.remove('open')));
   }
+
+  $$('.nav a, .hero-actions a, .panel-footer a').forEach((a) => {
+    a.addEventListener('click', () => trackEvent('nav_click', { link_text: a.textContent.trim(), link_url: a.getAttribute('href') || '' }));
+  });
 
   const style = document.createElement('style');
   style.textContent = `
@@ -46,7 +72,7 @@
         <label><span>Telefon</span><input id="customerPhone" type="tel" placeholder="05xx xxx xx xx" autocomplete="tel"></label>
         <label><span>İşletme / Marka</span><input id="businessName" type="text" placeholder="Varsa işletme adı"></label>
         <label><span>Sektör</span><input id="businessSector" type="text" placeholder="Örn: mantar üretimi, güzellik salonu"></label>
-        <label><span>Şehir / Bölge</span><input id="serviceRegion" type="text" placeholder="Örn: Kocaeli, Gebze, Türkiye geneli"></label>
+        <label><span>Şehir / Bölge</span><input id="serviceRegion" type="text" placeholder="Örn: İstanbul, Ankara, Türkiye geneli"></label>
         <label><span>Hedef Kitle</span><input id="targetAudience" type="text" placeholder="Kimlere ulaşmak istiyorsunuz?"></label>
       </div>
       <div class="smart-form-title">2. Hizmet ve Proje İhtiyacı</div>
@@ -202,6 +228,7 @@
       card.querySelectorAll('.analysis-tab').forEach((b) => b.classList.remove('active'));
       card.querySelectorAll('.analysis-panel').forEach((p) => p.classList.remove('active'));
       btn.classList.add('active'); card.querySelector(`[data-panel="${btn.dataset.tab}"]`)?.classList.add('active');
+      trackEvent('ai_result_tab_click', { tab_name: btn.dataset.tab || '' });
     }));
     area.scrollTop = area.scrollHeight;
   }
@@ -209,16 +236,18 @@
   async function runCouncil() {
     const start = $('#startCouncil');
     if (val('projectInput').length < 8) { status('Lütfen proje ihtiyacını biraz daha açıklayıcı yazın.'); $('#projectInput')?.focus(); return; }
+    trackEvent('ai_divan_start', { selected_services: services().join(', ') || 'none' });
     notified = false; finalDecision = ''; aiData = null; tone(false); speak('Cezeri AI Divanı başladı. Proje talebi analiz ediliyor.');
     if (start) { start.disabled = true; start.textContent = 'Proje dosyası hazırlanıyor...'; }
     const area = $('#councilLog'); if (area) area.innerHTML = '<div class="empty-log">Talep okunuyor, kapsam çıkarılıyor...</div>';
     status('AI Divanı talebi analiz ediyor ve proje dosyası hazırlıyor...');
     const data = await callAI(projectText()); aiData = data;
+    trackEvent('ai_project_file_created', { recommended_package: data.projectFile?.recommendedPackage || 'unknown' });
     for (const item of data.responses || []) { active(item.key); log(item.title || item.key, item.text || ''); speak(`${item.title || ''}. ${item.text || ''}`); await sleep(1400); }
     active(''); finalDecision = data.final || ''; tone(true); renderProjectFile(data); speak('Proje dosyası hazırlandı. ' + (data.customerSummary || finalDecision), true);
     status('Proje dosyası hazırlandı. Talep ekibe gönderiliyor...');
-    try { const notifyResult = await notifyLead(); notified = true; log('Talep Alındı', notifyResult.partial ? `Bilgiler kısmen ekibe iletildi: ${notifyResult.message}.` : 'Bilgiler ekibe iletildi.', true); status('Talebiniz alındı. Cezeri Digital ekibi sizinle iletişime geçecek.'); }
-    catch (err) { log('Bildirim Hatası', 'Talep oluşturuldu fakat ekibe iletilirken sorun oluştu. Lütfen daha sonra tekrar deneyin.', true); status('Bildirim gönderilemedi. Sunucu ayarlarını kontrol edin.'); }
+    try { const notifyResult = await notifyLead(); notified = true; trackEvent('lead_sent_to_team', { sent_count: notifyResult.sent || 0, total_count: notifyResult.total || 0 }); log('Talep Alındı', notifyResult.partial ? `Bilgiler kısmen ekibe iletildi: ${notifyResult.message}.` : 'Bilgiler ekibe iletildi.', true); status('Talebiniz alındı. Cezeri Digital ekibi sizinle iletişime geçecek.'); }
+    catch (err) { trackEvent('lead_send_error', { error_message: String(err.message || err).slice(0, 120) }); log('Bildirim Hatası', 'Talep oluşturuldu fakat ekibe iletilirken sorun oluştu. Lütfen daha sonra tekrar deneyin.', true); status('Bildirim gönderilemedi. Sunucu ayarlarını kontrol edin.'); }
     if (start) { start.disabled = false; start.textContent = notified ? 'Yeni Proje Dosyası Oluştur' : 'AI Proje Dosyasını Oluştur'; }
   }
 
