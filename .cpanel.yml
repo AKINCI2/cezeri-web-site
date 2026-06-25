@@ -6,3 +6,5 @@ deployment:
     - /bin/cp -R web-tasarim $DEPLOYPATH
     - /bin/cp -R logo-tasarim $DEPLOYPATH
     - /bin/cp -R sosyal-medya-tasarimi $DEPLOYPATH
+    - /bin/cp -R video-klip $DEPLOYPATH
+    - /bin/cp -R ai-muzik-jingle $DEPLOYPATH
