@@ -3,27 +3,10 @@
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-  const INSTAGRAM_URL = 'https://www.instagram.com/cezeridigital/';
   let aiData = null;
   let finalDecision = '';
   let notified = false;
   let voice = null;
-
-  function setMeta(name, content, attr = 'name') {
-    let tag = document.head.querySelector(`meta[${attr}="${name}"]`);
-    if (!tag) {
-      tag = document.createElement('meta');
-      tag.setAttribute(attr, name);
-      document.head.appendChild(tag);
-    }
-    tag.setAttribute('content', content);
-  }
-
-  document.title = 'Cezeri Digital | Web Tasarım, Logo, Sosyal Medya ve Dijital İçerik';
-  setMeta('description', 'Cezeri Digital; web sitesi, logo tasarımı, sosyal medya içerikleri, video-klip, AI müzik ve dijital proje analizi üretir.');
-  setMeta('og:title', 'Cezeri Digital | Web Tasarım, Marka Tasarımı ve Dijital İçerik', 'property');
-  setMeta('og:description', 'Web sitesi, logo, sosyal medya tasarımı, video-klip, AI müzik ve dijital proje analiziyle markanız için ölçülebilir dijital çözümler üretiriz.', 'property');
-  setMeta('twitter:description', 'Web sitesi, logo, sosyal medya, video-klip ve AI destekli proje analizi.', 'name');
 
   function trackEvent(name, params = {}) {
     try {
@@ -44,78 +27,36 @@
     $$('.nav a').forEach((a) => a.addEventListener('click', () => header.classList.remove('open')));
   }
 
-  function addInstagramLinks() {
-    const nav = $('.nav');
-    if (nav && !$('.nav-instagram', nav)) {
-      const a = document.createElement('a');
-      a.className = 'nav-instagram';
-      a.href = INSTAGRAM_URL;
-      a.target = '_blank';
-      a.rel = 'noopener';
-      a.textContent = 'Instagram';
-      nav.insertBefore(a, $('.nav-cta', nav));
-    }
-    const footerInner = $('.footer-inner');
-    if (footerInner && !$('.footer-instagram', footerInner)) {
-      const a = document.createElement('a');
-      a.className = 'footer-instagram';
-      a.href = INSTAGRAM_URL;
-      a.target = '_blank';
-      a.rel = 'noopener';
-      a.textContent = 'Instagram';
-      footerInner.insertBefore(a, footerInner.lastElementChild);
-    }
-  }
-  addInstagramLinks();
-
-  $$('.nav a, .hero-actions a, .panel-footer a, .footer-inner a').forEach((a) => {
-    a.addEventListener('click', () => trackEvent('nav_click', { link_text: a.textContent.trim(), link_url: a.getAttribute('href') || '' }));
+  $$('.nav a, .hero-actions a, .panel-footer a, .footer-inner a, .service-card a').forEach((a) => {
+    a.addEventListener('click', () => trackEvent('nav_click', { link_text: a.textContent.trim().slice(0, 60), link_url: a.getAttribute('href') || '' }));
   });
 
-  const style = document.createElement('style');
-  style.textContent = `
-    #offer{display:none!important}.service-check-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:2px 0 4px}.service-check-list label,.voice-row{display:flex!important;align-items:center;gap:8px;padding:8px 10px;border-radius:14px;border:1px solid rgba(128,255,244,.16);background:rgba(255,255,255,.055);color:#eaffff;font-size:.82rem;line-height:1.25}.service-check-list input,.voice-row input{width:15px;height:15px;accent-color:#2ee6df}.smart-form-title{font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:#2ee6df;font-weight:1000;margin:7px 0 0}.field-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.field-grid.full{grid-template-columns:1fr}.field-grid label{display:grid;gap:6px}.field-grid span{font-weight:900;color:#eaffff;font-size:.88rem}.divan-form-card select,.divan-form-card input{width:100%;border:1px solid rgba(128,255,244,.16);background:rgba(255,255,255,.065);color:#fff;border-radius:15px;padding:10px 12px;outline:0}.divan-form-card select option{color:#061516}.analysis-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}.analysis-tab{border:1px solid rgba(128,255,244,.18);background:rgba(255,255,255,.06);color:#eaffff;border-radius:999px;padding:9px 12px;font-weight:900;cursor:pointer}.analysis-tab.active{background:#2ee6df;color:#041112}.analysis-panel{display:none}.analysis-panel.active{display:block}.brief-list{margin:8px 0 0;padding-left:20px;color:#abc3c4}.brief-list li{margin:5px 0}.mini-kv{display:grid;grid-template-columns:150px 1fr;gap:6px 12px;margin-top:8px}.mini-kv b{color:#fff}.mini-kv span{color:#b9d4d4}.real-team{grid-template-columns:repeat(2,minmax(280px,1fr))!important;max-width:980px;margin-left:0!important}.team-monogram{width:78px;height:78px;min-width:78px;border-radius:24px;display:grid;place-items:center;font-weight:1000;letter-spacing:.04em;color:#061516;background:linear-gradient(135deg,#70fff8,#2ee6df 58%,#0e89d7);box-shadow:0 18px 44px rgba(46,230,223,.18)}.team-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.team-meta span{border:1px solid rgba(128,255,244,.16);background:rgba(255,255,255,.055);color:#c8eeee;border-radius:999px;padding:6px 9px;font-size:.78rem;font-weight:800}.nav-instagram,.footer-instagram{color:#eaffff!important}.premium-note{color:#afcccc!important;font-size:.88rem;line-height:1.55;margin:6px 0 0}@media(max-width:820px){.field-grid,.service-check-list,.real-team{grid-template-columns:1fr!important}.mini-kv{grid-template-columns:1fr}.team-card{grid-template-columns:78px 1fr!important}}
+  const inlineStyle = document.createElement('style');
+  inlineStyle.textContent = `
+    #offer{display:none!important}.service-check-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:2px 0 4px}.service-check-list label,.voice-row{display:flex!important;align-items:center;gap:8px;padding:9px 11px;border-radius:14px;border:1px solid rgba(128,255,244,.16);background:rgba(255,255,255,.055);color:#eaffff;font-size:.84rem;line-height:1.25}.service-check-list input,.voice-row input{width:15px;height:15px;accent-color:#2ee6df}.smart-form-title{font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:#2ee6df;font-weight:1000;margin:7px 0 0}.field-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.field-grid.full{grid-template-columns:1fr}.field-grid label{display:grid;gap:6px}.field-grid span{font-weight:900;color:#eaffff;font-size:.88rem}.divan-form-card select,.divan-form-card input{width:100%;border:1px solid rgba(128,255,244,.16);background:rgba(255,255,255,.065);color:#fff;border-radius:15px;padding:11px 13px;outline:0}.divan-form-card select option{color:#061516}.analysis-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}.analysis-tab{border:1px solid rgba(128,255,244,.18);background:rgba(255,255,255,.06);color:#eaffff;border-radius:999px;padding:9px 12px;font-weight:900;cursor:pointer}.analysis-tab.active{background:#2ee6df;color:#041112}.analysis-panel{display:none}.analysis-panel.active{display:block}.brief-list{margin:8px 0 0;padding-left:20px;color:#abc3c4}.brief-list li{margin:5px 0}.mini-kv{display:grid;grid-template-columns:150px 1fr;gap:6px 12px;margin-top:8px}.mini-kv b{color:#fff}.mini-kv span{color:#b9d4d4}@media(max-width:820px){.field-grid,.service-check-list{grid-template-columns:1fr!important}.mini-kv{grid-template-columns:1fr!important}}
   `;
-  document.head.appendChild(style);
+  document.head.appendChild(inlineStyle);
 
-  $$('.nav-cta, a[href="#offer"]').forEach((a) => {
-    a.setAttribute('href', '#ai-divan');
-    if (a.textContent.trim() === 'Teklif Al') a.textContent = 'AI Divanı + Talep';
-  });
-
-  function polishStaticCopy() {
-    const eyebrow = $('.hero-copy .eyebrow');
-    if (eyebrow) eyebrow.textContent = 'Cezeri Digital Studio';
-    const heroTitle = $('.hero-copy h1');
-    if (heroTitle) heroTitle.innerHTML = 'Web tasarım, logo ve <span>akıllı dijital üretim.</span>';
-    const heroText = $('.hero-text');
-    if (heroText) heroText.textContent = 'Markanız için modern web siteleri, güçlü görsel kimlikler, sosyal medya içerikleri ve ölçülebilir dijital çözümler üretiyoruz.';
-    const heroBtns = $$('.hero-actions a');
-    if (heroBtns[0]) heroBtns[0].textContent = 'Projeni Analiz Et';
-    if (heroBtns[1]) heroBtns[1].textContent = 'Hizmetleri İncele';
-    if (heroBtns[2]) heroBtns[2].textContent = 'SEO Yaklaşımı';
-
-    const vitrinTitle = $('#vitrin .split-heading h2');
-    if (vitrinTitle) vitrinTitle.textContent = 'Dijitalde profesyonel bir ilk izlenim';
-    const vitrinText = $('#vitrin .split-heading > p');
-    if (vitrinText) vitrinText.textContent = 'Hızlı açılan, mobilde düzgün çalışan ve ziyaretçiyi doğru aksiyona yönlendiren web deneyimleri tasarlarız.';
-
-    const servicesTitle = $('#services .section-title h2');
-    if (servicesTitle) servicesTitle.textContent = 'Markanız için web, tasarım ve içerik üretimini tek merkezde topluyoruz.';
-    const serviceGrid = $('.service-grid');
-    if (serviceGrid) {
-      serviceGrid.innerHTML = `
-        <article class="service-card reveal in"><span class="icon">🌐</span><h3>Web Sitesi</h3><p>Kurumsal tanıtım, landing page, portfolyo ve hizmet sayfaları için hızlı, güven veren ve mobil uyumlu web çözümleri.</p></article>
-        <article class="service-card reveal in"><span class="icon">💎</span><h3>Logo & Kurumsal Kimlik</h3><p>Markanızın dijitalde tutarlı görünmesi için logo, renk paleti, yazı dili ve temel kimlik tasarımı.</p></article>
-        <article class="service-card reveal in"><span class="icon">🎨</span><h3>Sosyal Medya Tasarımı</h3><p>Post, hikâye, reels kapağı, kampanya görseli ve reklam kreatifleri için düzenli tasarım dili.</p></article>
-        <article class="service-card reveal in"><span class="icon">🎬</span><h3>Video & Klip</h3><p>Marka tanıtımı, kısa video, reels ve dijital kampanyalar için dikkat çeken görsel anlatım.</p></article>
-        <article class="service-card reveal in"><span class="icon">🎵</span><h3>AI Müzik & Jingle</h3><p>Reklam, tanıtım ve sosyal medya içerikleri için markaya uygun müzik, jingle ve şarkı fikirleri.</p></article>
-        <article class="service-card reveal in"><span class="icon">📈</span><h3>SEO & Ölçüm</h3><p>Search Console, Analytics ve dönüşüm takibiyle sitenizi sadece yayına almakla kalmayıp ölçülebilir hale getiririz.</p></article>`;
-    }
-    const seoBox = $('.seo-copy');
-    if (seoBox) seoBox.innerHTML = '<h3>SEO ve ölçüm odaklı kurulum</h3><p>Web sitesini yalnızca görsel bir vitrin olarak değil, arama motorlarında anlaşılır ve müşteri talebi üretebilen bir sistem olarak kurgularız.</p><ul><li>Başlık, açıklama, sitemap, robots ve yapılandırılmış veri düzeni</li><li>Google Search Console ve Analytics 4 ölçüm altyapısı</li><li>Hizmet sayfalarıyla uzun vadeli organik trafik stratejisi</li></ul>';
+  function ensureServiceLinks() {
+    const cards = $$('.service-card');
+    const targets = {
+      'Video & Klip': 'tanitim-reklam-video/',
+      'AI Müzik & Jingle': 'ai-muzik-jingle/'
+    };
+    cards.forEach((card) => {
+      const title = $('h3', card)?.textContent.trim();
+      const href = targets[title];
+      if (!href || $('a', card)) return;
+      const children = Array.from(card.childNodes);
+      const a = document.createElement('a');
+      a.href = href;
+      a.style.color = 'inherit';
+      a.style.textDecoration = 'none';
+      children.forEach((node) => a.appendChild(node));
+      card.appendChild(a);
+    });
   }
-  polishStaticCopy();
+  ensureServiceLinks();
 
   const divanIntro = $('#ai-divan .split-heading p:not(.eyebrow)');
   if (divanIntro) divanIntro.textContent = 'Projenizi anlatın; sistem talebinizi özetler, kapsamı çıkarır ve ekibe uygulanabilir bir brif olarak iletir.';
@@ -141,12 +82,12 @@
         <label><input type="checkbox" name="serviceType" value="Logo ve Kurumsal Kimlik"> Logo / Kimlik</label>
         <label><input type="checkbox" name="serviceType" value="Sosyal Medya İçeriği"> Sosyal Medya</label>
         <label><input type="checkbox" name="serviceType" value="Dijital Tasarım"> Dijital Tasarım</label>
-        <label><input type="checkbox" name="serviceType" value="Video ve Klip"> Video / Klip</label>
-        <label><input type="checkbox" name="serviceType" value="AI Müzik ve Şarkı"> AI Müzik</label>
+        <label><input type="checkbox" name="serviceType" value="Tanıtım ve Reklam Videosu"> Tanıtım / Reklam Video</label>
+        <label><input type="checkbox" name="serviceType" value="AI Müzik ve Jingle"> AI Müzik / Jingle</label>
         <label><input type="checkbox" name="serviceType" value="SEO ve Ölçüm"> SEO / Ölçüm</label>
         <label><input type="checkbox" name="serviceType" value="Diğer"> Diğer</label>
       </div>
-      <div class="field-grid full"><label><span>Projenizi anlatın</span><textarea id="projectInput" rows="5" placeholder="Ne istiyorsunuz, hangi sorunu çözmek istiyorsunuz, müşteriniz sitede ne görmeli?"></textarea></label></div>
+      <div class="field-grid full"><label><span>Projenizi anlatın</span><textarea id="projectInput" rows="5" placeholder="Ne üretilecek, hangi hedef için kullanılacak, müşteriniz ne görmeli?"></textarea></label></div>
       <div class="smart-form-title">3. Tasarım ve İçerik</div>
       <div class="field-grid">
         <label><span>Tasarım tarzı</span><select id="designStyle"><option value="Belirtilmedi">Seçiniz</option><option>Modern ve sade</option><option>Kurumsal</option><option>Premium / lüks</option><option>Doğal / samimi</option><option>Genç / dinamik</option><option>Yerel / güven veren</option></select></label>
@@ -166,14 +107,6 @@
       <label class="voice-row"><input id="voiceEnabled" type="checkbox" checked> Divan konuşmaları sesli okunsun</label>
       <div class="divan-actions"><button class="btn primary" id="startCouncil" type="button">Proje Analizi Oluştur</button><button class="btn ghost" id="clearCouncil" type="button">Temizle</button></div>
       <p class="divan-status" id="aiStatus">Bilgileri doldurun; talep analiz edilip ekibe iletilecek.</p>`;
-  }
-
-  const teamGrid = $('.team-grid');
-  if (teamGrid) {
-    teamGrid.classList.add('real-team');
-    teamGrid.innerHTML = `
-      <article class="team-card founder reveal in"><span class="team-monogram">VB</span><div><h3>Vedat Barut</h3><p>Web geliştirme, grafik tasarım, yazılım ve oyun geliştirme odağında dijital üretim.</p><div class="team-meta"><span>Web</span><span>Grafik</span><span>Yazılım</span><span>Oyun</span></div></div></article>
-      <article class="team-card reveal in"><span class="team-monogram">YE</span><div><h3>Yasir Elesgerov</h3><p>Dijital üretim süreçleri, içerik hazırlığı ve proje geliştirme desteği.</p><div class="team-meta"><span>Üretim</span><span>İçerik</span><span>Proje</span></div></div></article>`;
   }
 
   const revealItems = $$('.reveal');
@@ -237,20 +170,22 @@
     const l = text.toLocaleLowerCase('tr-TR');
     const urgent = l.includes('acil') || l.includes('hemen');
     const low = l.includes('az bütçe') || l.includes('param yok') || l.includes('uygun bütçe') || l.includes('ucuz');
+    const video = l.includes('video') || l.includes('tanıtım') || l.includes('reklam');
+    const music = l.includes('müzik') || l.includes('jingle') || l.includes('şarkı');
     const web = l.includes('web') || l.includes('site');
-    const pack = urgent || low ? 'Acil MVP Web Paketi' : web ? 'Profesyonel Web Vitrini Paketi' : 'Dijital Başlangıç Paketi';
+    const pack = video ? 'Tanıtım ve Reklam Video Paketi' : music ? 'AI Müzik ve Jingle Paketi' : urgent || low ? 'Acil MVP Paketi' : web ? 'Profesyonel Web Vitrini Paketi' : 'Dijital Başlangıç Paketi';
     return {
       responses: [
         { key:'cezeri', title:'Cezeri - Kapsam Analizi', text:`Talep ${urgent ? 'hızlı teslim' : 'planlı çalışma'} odaklı görünüyor. İlk aşamada hedef netleştirilmeli ve ${pack} kapsamında sade, ölçülebilir bir başlangıç yapılmalı.` },
-        { key:'mimar', title:'Mimar Sinan - Tasarım Yaklaşımı', text:'Arayüz güven veren, sade ve mobilde rahat okunur olmalı. Marka dili net değilse ilk fazda temiz tipografi ve kontrollü renk paletiyle ilerlenmeli.' },
-        { key:'farabi', title:'Farabi - Teknik Plan', text:'Hızlı açılan sayfa yapısı, temel SEO, iletişim yönlendirmesi ve ölçüm altyapısı öncelikli kurulmalı. Form alanları ekibe eksiksiz brif olarak iletilmeli.' },
-        { key:'tonyukuk', title:'Tonyukuk - Dönüşüm Planı', text:'İlk ekranda ne sunulduğu, kime hitap ettiği ve nasıl iletişim kurulacağı net olmalı. Gereksiz iddia yerine güven veren, açık ve kısa metinler kullanılmalı.' },
-        { key:'vedat', title:'Cezeri Kurulu - Son Karar', text:`Karar: ${pack}. İlk görüşmede logo, görsel materyal, hedef bölge, örnek stil ve teslim beklentisi netleştirilmeli.` }
+        { key:'mimar', title:'Mimar Sinan - Tasarım Yaklaşımı', text:'Görsel dil güven veren, sade ve kullanılacağı platforma uygun olmalı. Marka dili net değilse kontrollü renk paleti ve temiz tipografiyle ilerlenmeli.' },
+        { key:'farabi', title:'Farabi - Teknik Plan', text:'Hız, mobil uyum, temel SEO, ölçüm altyapısı ve talebin ekibe eksiksiz brif olarak iletilmesi öncelikli olmalı.' },
+        { key:'tonyukuk', title:'Tonyukuk - Dönüşüm Planı', text:'Mesaj kısa, açık ve hedefe yönelik olmalı. Gereksiz iddia yerine güven veren ve müşteriyi aksiyona çağıran metinler kullanılmalı.' },
+        { key:'vedat', title:'Cezeri Kurulu - Son Karar', text:`Karar: ${pack}. İlk görüşmede hedef, örnek stil, içerik durumu, teslim beklentisi ve bütçe netleştirilmeli.` }
       ],
       customerSummary:`Talebiniz analiz edildi. İlk aşamada ${pack} ile sade, hızlı ve güven veren bir dijital başlangıç yapılması uygun görünüyor. Ekibimiz kapsamı netleştirip sizinle uygun zamanda iletişime geçecek.`,
-      teamBrief:`Talep ilk fazda sade kapsamla ele alınmalı. Seçilen hizmetler, logo durumu, tasarım tercihi, içerik durumu ve geri dönüş saati mutlaka dikkate alınmalı. İlk görüşmede eksik materyaller, hedef kitle ve örnek stil netleştirilmeli.`,
-      projectFile:{ projectType:web?'Web sitesi / dijital vitrin':'Dijital hizmet talebi', recommendedPackage:pack, budgetLevel:low?'Ekonomik başlangıç':'Belirtilmedi', urgency:urgent?'Acil':'Normal', scope:['Mobil uyumlu vitrin','Temel içerik düzeni','İletişim yönlendirmesi','Temel SEO ve ölçüm'], stages:['Kısa keşif görüşmesi','İçerik ve görsel toplama','Tasarım ve kurulum','Yayın ve kontrol'], missingInfo:['İşletme adı','Logo durumu','Görsel materyaller','Hedef bölge','Örnek stil'], risks:['Kapsam büyürse teslim süresi uzar','Bütçe düşükse ilk faz sade tutulmalı'], upsellOpportunities:['Logo yenileme','Sosyal medya içerikleri','Reklam görseli'], nextStep:'Müşteriyle uygun saatte kısa keşif görüşmesi yapılmalı.'},
-      final:`Proje Özeti\nTalep için sade ve ölçülebilir bir dijital başlangıç önerilir.\n\nÖnerilen Paket\n${pack}\n\nKapsam\nMobil uyumlu vitrin, temel içerik, iletişim yönlendirmesi, temel SEO ve ölçüm.\n\nTeslim Aşamaları\nKeşif, içerik toplama, tasarım/kurulum ve yayın kontrolü.\n\nEksik Bilgiler\nLogo, görseller, hedef bölge, örnek stil ve net iletişim bilgileri.\n\nSonraki Adım\nEkip uygun zamanda iletişime geçip kapsamı netleştirecek.`
+      teamBrief:`Talep ilk fazda sade kapsamla ele alınmalı. Seçilen hizmetler, logo durumu, tasarım tercihi, içerik durumu ve geri dönüş saati mutlaka dikkate alınmalı.`,
+      projectFile:{ projectType:video?'Tanıtım / reklam video':music?'AI müzik / jingle':web?'Web sitesi / dijital vitrin':'Dijital hizmet talebi', recommendedPackage:pack, budgetLevel:low?'Ekonomik başlangıç':'Belirtilmedi', urgency:urgent?'Acil':'Normal', scope:['Net mesaj kurgusu','Görsel/işitsel dil','İletişim yönlendirmesi','Temel SEO ve ölçüm'], stages:['Kısa keşif görüşmesi','İçerik ve materyal toplama','Üretim','Yayın ve kontrol'], missingInfo:['Marka adı','Logo durumu','Görsel veya ses materyalleri','Hedef kitle','Örnek stil'], risks:['Kapsam büyürse teslim süresi uzar','Bütçe düşükse ilk faz sade tutulmalı'], nextStep:'Müşteriyle uygun saatte kısa keşif görüşmesi yapılmalı.'},
+      final:`Proje Özeti\nTalep için sade ve ölçülebilir bir dijital başlangıç önerilir.\n\nÖnerilen Paket\n${pack}\n\nKapsam\nNet mesaj, görsel/işitsel dil, iletişim yönlendirmesi, temel SEO ve ölçüm.\n\nTeslim Aşamaları\nKeşif, içerik toplama, üretim ve yayın kontrolü.\n\nEksik Bilgiler\nMarka adı, logo, görseller/ses materyalleri, hedef kitle ve örnek stil.\n\nSonraki Adım\nEkip uygun zamanda iletişime geçip kapsamı netleştirecek.`
     };
   }
 
