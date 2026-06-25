@@ -2,4 +2,4 @@
 deployment:
   tasks:
     - export DEPLOYPATH=/home/cezeridi/public_html/
-    - /bin/cp -R * $DEPLOYPATH
+    - /bin/cp -R cezeri-site.css cezeri-fixes.css cezeri-site.js ai-divan.php lead-notify.php robots.txt sitemap.xml $DEPLOYPATH
