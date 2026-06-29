@@ -8,3 +8,4 @@ deployment:
     - /bin/cp -R sosyal-medya-tasarimi $DEPLOYPATH
     - /bin/cp -R video-klip $DEPLOYPATH
     - /bin/cp -R ai-muzik-jingle $DEPLOYPATH
+    - /bin/cp -R demo $DEPLOYPATH
