@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mill Event House | Premium Davet ve Organizasyon</title>
+    <meta
+      name="description"
+      content="Mill Event House; Tuzla İstanbul'da düğün, nişan, kına, kurumsal etkinlik ve özel davetler için premium organizasyon, event design ve davet planlama hizmetleri sunar."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header" data-header>
+      <a class="brand" href="#anasayfa" aria-label="Mill Event House">
+        <img src="assets/mill-logo-cropped.png" alt="Mill Event House logo" />
+      </a>
+      <button class="nav-toggle" type="button" data-menu-toggle aria-label="Menüyü aç">
+        <span></span>
+        <span></span>
+      </button>
+      <nav class="main-nav" data-nav>
+        <a class="active" href="#anasayfa">Ana Sayfa</a>
+        <a href="#deneyim">Deneyim</a>
+        <a href="#hizmetler">Hizmetler</a>
+        <a href="#video">Video</a>
+        <a href="#galeri">Galeri</a>
+        <a href="#paketler">Paketler</a>
+        <a href="#iletisim">İletişim</a>
+      </nav>
+      <a class="call-btn" href="https://api.whatsapp.com/send?phone=905078725821" target="_blank" rel="noreferrer">Bize Ulaşın</a>
+    </header>
+
+    <main id="anasayfa">
+      <section class="hero">
+        <div class="hero-bg" aria-hidden="true">
+          <img src="assets/venue-stairs.png" alt="" />
+        </div>
+        <div class="hero-inner">
+          <div class="hero-copy">
+            <p class="kicker">Mill Event House</p>
+            <h1>Hayalinizdeki Anlar, <em>Bizimle Gerçekleşir</em></h1>
+            <p>
+              Düğün, nişan, kına, kurumsal etkinlik ve özel davetlerinizde; konseptten dekorasyona, akıştan sahne
+              atmosferine kadar her detayı sizin için tasarlıyoruz.
+            </p>
+            <div class="hero-actions">
+              <a class="btn btn-gold" href="#hizmetler">Hizmetlerimiz</a>
+              <a class="btn btn-line" href="#paketler">Paketleri İncele</a>
+            </div>
+          </div>
+          <button class="play-block" type="button" data-video-open data-video-title="Mill Event House Tanıtımı" aria-label="Tanıtım videosunu izle">
+            <span class="play">▶</span>
+            <span>
+              <strong>Tanıtım Videosunu İzle</strong>
+              <small>Mill Event House'u keşfedin</small>
+            </span>
+          </button>
+        </div>
+      </section>
+
+      <section class="stats">
+        <div><span>5+</span><p>Yıllık Deneyim</p></div>
+        <div><span>1000+</span><p>Mutlu Misafir</p></div>
+        <div><span>150+</span><p>Başarılı Organizasyon</p></div>
+        <div><span>%100</span><p>Müşteri Memnuniyeti</p></div>
+      </section>
+
+      <section class="signature-experience" id="deneyim">
+        <div class="section-title row">
+          <div>
+            <p class="kicker">Premium Deneyim</p>
+            <h2>Bir davetin ihtiyacı olan her şey tek merkezde.</h2>
+          </div>
+          <p class="section-lead">
+            Mill Event House; mekan atmosferi, konsept tasarımı, operasyon akışı ve medya üretimini aynı estetik çizgide
+            birleştiren butik bir organizasyon deneyimi sunar.
+          </p>
+        </div>
+        <div class="experience-grid">
+          <button class="experience-card large" type="button" data-detail="konsept">
+            <img src="assets/venue-stairs.png" alt="Konsept tasarımı" />
+            <span>01</span>
+            <h3>Konsept Tasarımı</h3>
+            <p>Renk paleti, çiçek, kumaş, masa, giriş alanı ve fotoğraf köşesi bütüncül bir dilde planlanır.</p>
+          </button>
+          <button class="experience-card" type="button" data-detail="mekan">
+            <img src="assets/stair-moment.png" alt="Mekan deneyimi" />
+            <span>02</span>
+            <h3>Mekan Deneyimi</h3>
+            <p>Karşılama, seremoni, masa düzeni ve final anı dahil tüm temas noktaları misafir deneyimine göre kurulur.</p>
+          </button>
+          <button class="experience-card" type="button" data-detail="operasyon">
+            <img src="assets/couple-dance.png" alt="Operasyon akışı" />
+            <span>03</span>
+            <h3>Akış & Operasyon</h3>
+            <p>Etkinlik günü ekip, tedarikçi, sahne, müzik, servis ve seremoni akışı tek merkezden yönetilir.</p>
+          </button>
+        </div>
+      </section>
+
+      <section class="services" id="hizmetler">
+        <div class="section-title center">
+          <p class="kicker">Hizmetlerimiz</p>
+          <h2>Hizmet Stüdyosu</h2>
+          <p class="center-lead">Kartlara tıklayarak her hizmetin kapsamını, planlama detaylarını ve uygulama adımlarını inceleyin.</p>
+        </div>
+        <div class="service-tabs" aria-label="Hizmet kategorileri">
+          <button class="is-active" type="button" data-service-filter="all">Tümü</button>
+          <button type="button" data-service-filter="wedding">Wedding</button>
+          <button type="button" data-service-filter="corporate">Kurumsal</button>
+          <button type="button" data-service-filter="design">Event Design</button>
+        </div>
+        <div class="service-cards">
+          <button class="service-card" type="button" data-detail="dugun" data-service-group="wedding">
+            <img src="assets/venue-stairs.png" alt="Düğün organizasyonu" />
+            <span class="card-badge">01</span>
+            <h3>Düğün Organizasyonu</h3>
+            <p>Hayalinizdeki düğünü kusursuz bir akış ve zarif atmosferle planlıyoruz.</p>
+            <b>Detaylar</b>
+          </button>
+          <button class="service-card" type="button" data-detail="nisan" data-service-group="wedding">
+            <img src="assets/rings.png" alt="Nişan organizasyonu" />
+            <span class="card-badge">02</span>
+            <h3>Nişan Organizasyonu</h3>
+            <p>Söz ve nişan törenlerinizi fotoğraf değeri yüksek detaylarla tasarlıyoruz.</p>
+            <b>Detaylar</b>
+          </button>
+          <button class="service-card" type="button" data-detail="kurumsal" data-service-group="corporate">
+            <img src="assets/stair-moment.png" alt="Kurumsal etkinlikler" />
+            <span class="card-badge">03</span>
+            <h3>Kurumsal Etkinlikler</h3>
+            <p>Lansman, toplantı ve davetlerde marka prestijini yükselten etkinlik çözümleri.</p>
+            <b>Detaylar</b>
+          </button>
+          <button class="service-card" type="button" data-detail="kina" data-service-group="wedding">
+            <img src="assets/couple-dance.png" alt="Kına ve özel davetler" />
+            <span class="card-badge">04</span>
+            <h3>Kına & Özel Davet</h3>
+            <p>Kına, doğum günü ve özel kutlamalar için enerjik ve şık organizasyon desteği.</p>
+            <b>Detaylar</b>
+          </button>
+          <button class="service-card" type="button" data-detail="dekor" data-service-group="design">
+            <img src="assets/venue-stairs.png" alt="Dekorasyon hizmetleri" />
+            <span class="card-badge">05</span>
+            <h3>Dekorasyon</h3>
+            <p>Özel tasarım dekorasyon hizmetleriyle mekanın ruhunu yeniden kuruyoruz.</p>
+            <b>Detaylar</b>
+          </button>
+          <button class="service-card" type="button" data-detail="fotograf" data-service-group="design">
+            <img src="assets/rings.png" alt="Fotoğraf ve video prodüksiyonu" />
+            <span class="card-badge">06</span>
+            <h3>Fotoğraf & Video</h3>
+            <p>Hazırlık, seremoni ve davet anları için profesyonel medya planı.</p>
+            <b>Detaylar</b>
+          </button>
+          <button class="service-card" type="button" data-detail="sahne" data-service-group="corporate">
+            <img src="assets/venue-stairs.png" alt="Sahne ve ışık tasarımı" />
+            <span class="card-badge">07</span>
+            <h3>Sahne & Işık</h3>
+            <p>İlk dans, konuşma, lansman ve sahne çıkışları için atmosfer tasarımı.</p>
+            <b>Detaylar</b>
+          </button>
+          <button class="service-card" type="button" data-detail="danismanlik" data-service-group="design">
+            <img src="assets/stair-moment.png" alt="Planlama danışmanlığı" />
+            <span class="card-badge">08</span>
+            <h3>Planlama Danışmanlığı</h3>
+            <p>Bütçe, takvim, tedarikçi ve davet akışı için stratejik planlama.</p>
+            <b>Detaylar</b>
+          </button>
+        </div>
+      </section>
+
+      <section class="about-band" id="video">
+        <div class="video-showcase">
+          <button class="video-preview main-video" type="button" data-video-open data-video-title="Mill Event House Tanıtımı">
+            <img src="assets/couple-dance.png" alt="Mill Event House tanıtım videosu" />
+            <span class="play">▶</span>
+            <small>01:45</small>
+          </button>
+          <div class="mini-videos">
+            <button type="button" data-video-open data-video-title="Mekan Turu">
+              <img src="assets/venue-stairs.png" alt="Mekan turu" />
+              <span>Mekan Turu</span>
+            </button>
+            <button type="button" data-video-open data-video-title="Hazırlık Anları">
+              <img src="assets/rings.png" alt="Hazırlık anları" />
+              <span>Hazırlık</span>
+            </button>
+            <button type="button" data-video-open data-video-title="Davet Finali">
+              <img src="assets/stair-moment.png" alt="Davet finali" />
+              <span>Final</span>
+            </button>
+          </div>
+        </div>
+        <div class="about-copy">
+          <p class="kicker">Tanıtım Videosu</p>
+          <h2>Biz Kimiz?</h2>
+          <p>
+            Mill Event House olarak; hayallerinizi gerçeğe dönüştürmek için tutkuyla çalışıyoruz. Her etkinliği bir
+            dekorasyon işi değil, baştan sona tasarlanmış bir deneyim olarak ele alıyoruz.
+          </p>
+          <div class="about-features">
+            <span>Yaratıcı Fikirler</span>
+            <span>Profesyonel Ekip</span>
+            <span>Özel Tasarımlar</span>
+          </div>
+          <button class="btn btn-gold" type="button" data-video-open data-video-title="Mill Event House Tanıtımı">Videoyu İzle</button>
+        </div>
+      </section>
+
+      <section class="process">
+        <div class="section-title center">
+          <p class="kicker">Planlama Süreci</p>
+          <h2>İlk görüşmeden davet finaline kadar net bir akış.</h2>
+        </div>
+        <div class="process-grid">
+          <article><span>01</span><h3>Keşif Görüşmesi</h3><p>Tarih, kişi sayısı, mekan, bütçe ve beklenti birlikte netleştirilir.</p></article>
+          <article><span>02</span><h3>Moodboard & Teklif</h3><p>Konsept dili, renk paleti, dekorasyon kapsamı ve paket içeriği hazırlanır.</p></article>
+          <article><span>03</span><h3>Prodüksiyon</h3><p>Tedarik, ekip, akış, sahne, masa ve medya planı tek takvim üzerinden yönetilir.</p></article>
+          <article><span>04</span><h3>Etkinlik Günü</h3><p>Kurulum, misafir karşılama, seremoni ve final anı profesyonel ekip tarafından takip edilir.</p></article>
+        </div>
+      </section>
+
+      <section class="gallery" id="galeri">
+        <div class="section-title row">
+          <div><p class="kicker">Galeriden</p><h2>Unutulmaz Anlardan Kareler</h2></div>
+          <a class="btn btn-outline" href="https://www.instagram.com/milleventhouse/" target="_blank" rel="noreferrer">Tüm Galeriyi Gör</a>
+        </div>
+        <div class="gallery-grid">
+          <button type="button" data-gallery="assets/venue-stairs.png"><img src="assets/venue-stairs.png" alt="Mekan dekorasyonu" /></button>
+          <button type="button" data-gallery="assets/couple-dance.png"><img src="assets/couple-dance.png" alt="Düğün anı" /></button>
+          <button type="button" data-gallery="assets/stair-moment.png"><img src="assets/stair-moment.png" alt="Merdiven konsepti" /></button>
+          <button type="button" data-gallery="assets/rings.png"><img src="assets/rings.png" alt="Yüzük detayı" /></button>
+        </div>
+      </section>
+
+      <section class="packages" id="paketler">
+        <div class="package-intro">
+          <p class="kicker">Paketlerimiz</p>
+          <h2>Size Özel Paketler</h2>
+          <p>İhtiyaçlarınıza ve bütçenize uygun paket seçeneklerimizle yanınızdayız. Her paket tarih, kişi sayısı ve tasarım yoğunluğuna göre özelleştirilebilir.</p>
+          <a class="btn btn-dark" href="#iletisim">Teklif Al</a>
+        </div>
+        <div class="pricing">
+          <button class="price-card" type="button" data-detail="standart">
+            <span>Standart Paket</span><strong>₺55.000</strong><p>Başlangıç fiyatı</p>
+            <ul><li>Mekan süslemesi</li><li>Temel dekorasyon</li><li>Organizasyon yönetimi</li><li>Müzik sistemi</li></ul>
+            <b>Detaylı Bilgi</b>
+          </button>
+          <button class="price-card popular" type="button" data-detail="premium">
+            <em>Popüler</em><span>Premium Paket</span><strong>₺85.000</strong><p>Başlangıç fiyatı</p>
+            <ul><li>Özel dekorasyon</li><li>Profesyonel fotoğraf</li><li>Canlı müzik</li><li>Mekan tasarımı</li></ul>
+            <b>Detaylı Bilgi</b>
+          </button>
+          <button class="price-card" type="button" data-detail="vip">
+            <span>VIP Paket</span><strong>₺120.000</strong><p>Başlangıç fiyatı</p>
+            <ul><li>Lüks dekorasyon</li><li>Full organizasyon</li><li>Özel ışık gösterisi</li><li>7/24 destek</li></ul>
+            <b>Detaylı Bilgi</b>
+          </button>
+        </div>
+      </section>
+
+      <section class="faq-section">
+        <div class="section-title row">
+          <div><p class="kicker">Sık Sorulanlar</p><h2>Teklif öncesi merak edilenler.</h2></div>
+          <p class="section-lead">Bu alan müşterinin karar vermesini kolaylaştırır ve WhatsApp öncesi temel soruları cevaplar.</p>
+        </div>
+        <div class="faq-grid">
+          <article><h3>Paketler kişiye özel değişir mi?</h3><p>Evet. Kişi sayısı, tarih, dekorasyon yoğunluğu ve medya ihtiyacına göre paket kapsamı revize edilir.</p></article>
+          <article><h3>Mekan dışı organizasyon yapılır mı?</h3><p>Talebe göre farklı mekanlarda konsept tasarımı, dekorasyon ve organizasyon yönetimi sağlanabilir.</p></article>
+          <article><h3>Video ve fotoğraf dahil mi?</h3><p>Premium ve VIP kapsamlarında medya prodüksiyonu eklenebilir; ihtiyaca göre ayrı tekliflenir.</p></article>
+        </div>
+      </section>
+
+      <section class="contact" id="iletisim">
+        <div>
+          <p class="kicker">İletişim</p>
+          <h2>Etkinliğiniz için görüşelim.</h2>
+          <p>Postane Mahallesi, Atatürk Cd. No: 7, Tuzla / İstanbul</p>
+          <div class="contact-links">
+            <a href="tel:+905078725821">0507 872 58 21</a>
+            <a href="https://api.whatsapp.com/send?phone=905078725821" target="_blank" rel="noreferrer">WhatsApp</a>
+            <a href="https://www.instagram.com/milleventhouse/" target="_blank" rel="noreferrer">@milleventhouse</a>
+          </div>
+        </div>
+        <form class="contact-form" data-contact-form>
+          <input name="name" type="text" placeholder="Ad Soyad" required />
+          <select name="event">
+            <option>Düğün</option>
+            <option>Nişan</option>
+            <option>Kına</option>
+            <option>Kurumsal Etkinlik</option>
+            <option>Özel Davet</option>
+          </select>
+          <textarea name="message" rows="4" placeholder="Tarih, kişi sayısı ve beklentinizi yazın"></textarea>
+          <button class="btn btn-gold" type="submit">Teklif Al</button>
+        </form>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <img src="assets/mill-logo-cropped.png" alt="Mill Event House logo" />
+      <p>Özel anlarınızı unutulmaz kılmak için profesyonel ekibimizle hayallerinizi gerçeğe dönüştürüyoruz.</p>
+      <small>© 2026 Mill Event House. Tüm hakları saklıdır.</small>
+    </footer>
+
+    <div class="detail-modal" data-modal aria-hidden="true">
+      <div class="modal-backdrop" data-modal-close></div>
+      <article class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <button class="close-btn" type="button" data-modal-close aria-label="Kapat">×</button>
+        <img data-modal-img src="assets/venue-stairs.png" alt="" />
+        <div class="modal-content">
+          <p class="kicker" data-modal-kicker>Detaylar</p>
+          <h2 id="modal-title" data-modal-title></h2>
+          <p data-modal-text></p>
+          <ul data-modal-list></ul>
+          <a class="btn btn-gold" href="https://api.whatsapp.com/send?phone=905078725821" target="_blank" rel="noreferrer">Teklif Al</a>
+        </div>
+      </article>
+    </div>
+
+    <div class="lightbox" data-lightbox aria-hidden="true">
+      <button class="close-btn" type="button" data-lightbox-close aria-label="Kapat">×</button>
+      <img data-lightbox-img src="assets/venue-stairs.png" alt="Galeri görseli" />
+    </div>
+
+    <div class="video-modal" data-video-modal aria-hidden="true">
+      <div class="modal-backdrop" data-video-close></div>
+      <article class="video-card-modal" role="dialog" aria-modal="true" aria-label="Tanıtım videosu">
+        <button class="close-btn" type="button" data-video-close aria-label="Kapat">×</button>
+        <img data-video-img src="assets/couple-dance.png" alt="Mill Event House video önizleme" />
+        <div>
+          <p class="kicker">Mill Event House</p>
+          <h2 data-video-heading>Tanıtım videosu alanı</h2>
+          <p>Buraya YouTube, Vimeo veya Instagram Reels video bağlantısı yerleştirilebilir.</p>
+        </div>
+      </article>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
