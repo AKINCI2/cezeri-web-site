@@ -125,27 +125,6 @@ button { font: inherit; }
     inset 0 0 26px rgba(203,162,75,.12);
 }
 .intro-mark small { font-size: 12px; color: var(--muted); }
-.sound-start {
-  min-height: 38px;
-  padding: 0 18px;
-  border: 1px solid rgba(240,207,122,.7);
-  border-radius: 999px;
-  color: #171104;
-  background: linear-gradient(135deg, var(--gold-2), var(--gold));
-  box-shadow: 0 14px 36px rgba(203,162,75,.34);
-  font-size: 11px;
-  font-weight: 900;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  cursor: pointer;
-  opacity: 0;
-  transform: translateY(10px);
-  transition: opacity .28s ease, transform .28s ease;
-}
-.sound-start.visible {
-  opacity: 1;
-  transform: none;
-}
 .intro i {
   position: absolute;
   z-index: 1;
@@ -991,6 +970,30 @@ h3 { font-size: 21px; }
   line-height: 1;
 }
 
+.music-toggle {
+  position: fixed;
+  z-index: 45;
+  right: 18px;
+  bottom: 18px;
+  min-height: 46px;
+  padding: 0 18px;
+  border: 1px solid rgba(240,207,122,.72);
+  border-radius: 999px;
+  color: #171104;
+  background: linear-gradient(135deg, var(--gold-2), var(--gold));
+  box-shadow: 0 18px 46px rgba(0,0,0,.24), 0 12px 30px rgba(203,162,75,.28);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.music-toggle.playing {
+  color: var(--ink);
+  background: rgba(8,11,8,.84);
+  backdrop-filter: blur(12px);
+}
+
 .reveal {
   opacity: 0;
   transform: translateY(28px);
@@ -1200,6 +1203,13 @@ h3 { font-size: 21px; }
   .floating-icon { width: 48px; height: 48px; border-radius: 14px; }
   .floating-panel strong { font-size: 26px; }
   .floating-panel p { font-size: 14px; line-height: 1.55; }
+  .music-toggle {
+    right: 12px;
+    bottom: 12px;
+    min-height: 42px;
+    padding: 0 14px;
+    font-size: 11px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

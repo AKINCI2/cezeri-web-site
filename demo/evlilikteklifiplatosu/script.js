@@ -9,9 +9,10 @@ const floatingPanel = document.querySelector(".floating-panel");
 const floatingClose = document.querySelector(".floating-close");
 const conceptButtons = document.querySelectorAll(".concept-bar button");
 const conceptDetail = document.querySelector(".concept-detail");
-const soundStart = document.querySelector(".sound-start");
+const musicToggle = document.querySelector(".music-toggle");
 let introMusicPlayed = false;
 let audioContext;
+let musicNodes = [];
 
 const conceptCopy = {
   sandal: {
@@ -55,9 +56,10 @@ function playIntroMusic() {
     const feedback = audioContext.createGain();
     const wet = audioContext.createGain();
 
+    musicNodes.push(master, delay, feedback, wet);
     master.gain.setValueAtTime(0.0001, now);
-    master.gain.exponentialRampToValueAtTime(0.22, now + 0.18);
-    master.gain.exponentialRampToValueAtTime(0.0001, now + 4.4);
+    master.gain.exponentialRampToValueAtTime(0.34, now + 0.14);
+    master.gain.exponentialRampToValueAtTime(0.0001, now + 7.8);
 
     delay.delayTime.value = 0.28;
     feedback.gain.value = 0.18;
@@ -71,9 +73,11 @@ function playIntroMusic() {
     wet.connect(audioContext.destination);
 
     const notes = [
-      [523.25, 0, 0.62], [659.25, 0.22, 0.58], [783.99, 0.46, 0.76],
-      [987.77, 0.92, 0.82], [880.00, 1.28, 0.64], [783.99, 1.58, 0.66],
-      [659.25, 1.9, 0.7], [783.99, 2.32, 0.9], [1046.5, 2.86, 1.15]
+      [392.00, 0, 0.95], [523.25, 0.2, 0.92], [659.25, 0.42, 1.05],
+      [783.99, 0.9, 1.1], [659.25, 1.45, 1], [587.33, 1.82, 1.1],
+      [523.25, 2.22, 1.18], [659.25, 2.86, 1.15], [783.99, 3.22, 1.22],
+      [987.77, 3.86, 1.34], [880.00, 4.52, 1.28], [783.99, 5.05, 1.34],
+      [1046.5, 5.72, 1.65]
     ];
 
     notes.forEach(([frequency, offset, duration]) => {
@@ -89,10 +93,10 @@ function playIntroMusic() {
       shimmer.frequency.setValueAtTime(frequency * 2, start);
 
       gain.gain.setValueAtTime(0.0001, start);
-      gain.gain.exponentialRampToValueAtTime(0.18, start + 0.04);
+      gain.gain.exponentialRampToValueAtTime(0.24, start + 0.04);
       gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
       shimmerGain.gain.setValueAtTime(0.0001, start);
-      shimmerGain.gain.exponentialRampToValueAtTime(0.035, start + 0.04);
+      shimmerGain.gain.exponentialRampToValueAtTime(0.05, start + 0.04);
       shimmerGain.gain.exponentialRampToValueAtTime(0.0001, start + duration * 0.75);
 
       osc.connect(gain);
@@ -103,25 +107,51 @@ function playIntroMusic() {
       shimmer.start(start);
       osc.stop(start + duration + 0.04);
       shimmer.stop(start + duration + 0.04);
+      musicNodes.push(osc, shimmer);
     });
   });
 }
 
-function showSoundButton() {
-  soundStart.classList.add("visible");
+function updateMusicButton(isPlaying) {
+  musicToggle.classList.toggle("playing", isPlaying);
+  musicToggle.setAttribute("aria-pressed", String(isPlaying));
+  musicToggle.textContent = isPlaying ? "♪ Müzik Açık" : "♪ Müzik Aç";
 }
 
 setTimeout(() => {
   playIntroMusic().catch(() => {
     introMusicPlayed = false;
-    showSoundButton();
+    updateMusicButton(false);
   });
 }, 350);
 
-soundStart.addEventListener("click", () => {
+function startMusicFromGesture() {
   playIntroMusic()
-    .then(() => soundStart.classList.remove("visible"))
-    .catch(showSoundButton);
+    .then(() => updateMusicButton(true))
+    .catch(() => updateMusicButton(false));
+}
+
+musicToggle.addEventListener("click", () => {
+  if (musicToggle.classList.contains("playing")) {
+    introMusicPlayed = false;
+    musicNodes.forEach((node) => {
+      try {
+        if (node.gain) node.gain.cancelScheduledValues(audioContext.currentTime);
+        if (node.gain) node.gain.setTargetAtTime(0.0001, audioContext.currentTime, 0.08);
+        if (node.stop) node.stop(audioContext.currentTime + 0.12);
+      } catch {}
+    });
+    musicNodes = [];
+    updateMusicButton(false);
+    return;
+  }
+  startMusicFromGesture();
+});
+
+["pointerdown", "keydown", "touchstart"].forEach((eventName) => {
+  window.addEventListener(eventName, () => {
+    if (!introMusicPlayed) startMusicFromGesture();
+  }, { once: true, passive: true });
 });
 
 const mutedVideos = document.querySelectorAll("video[muted]");
