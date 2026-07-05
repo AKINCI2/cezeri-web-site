@@ -3,111 +3,114 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Doktor Web Sitesi Örneği | Cezeri Digital</title>
-  <meta name="description" content="Doktor ve klinikler için uzmanlık, bilgilendirme ve randevu akışını gösteren canlı web sitesi ön izlemesi.">
+  <title>Cezeri Doktor Web Sitesi Ön İzlemesi | Cezeri Digital</title>
+  <meta name="description" content="Doktor ve klinikler için randevu, uzmanlık ve hasta bilgilendirme odaklı web sitesi ön izlemesi.">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-  <meta name="author" content="Cezeri Digital">
-  <meta name="theme-color" content="#0c1716">
   <link rel="canonical" href="https://cezeridigital.com/doktor-web-sitesi/">
-  <meta property="og:locale" content="tr_TR">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="Doktor Web Sitesi Örneği | Cezeri Digital">
-  <meta property="og:description" content="Doktor ve klinikler için uzmanlık, bilgilendirme ve randevu akışını gösteren canlı web sitesi ön izlemesi.">
-  <meta property="og:url" content="https://cezeridigital.com/doktor-web-sitesi/">
-  <meta property="og:site_name" content="Cezeri Digital">
-  <meta property="og:image" content="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1600&q=80">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Doktor Web Sitesi Örneği | Cezeri Digital">
-  <meta name="twitter:description" content="Doktor ve klinikler için uzmanlık, bilgilendirme ve randevu akışını gösteren canlı web sitesi ön izlemesi.">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
   <link rel="stylesheet" href="../sector-preview.css?v=20260705">
-  <script type="application/ld+json">
-  {"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://cezeridigital.com/doktor-web-sitesi/#webpage","url":"https://cezeridigital.com/doktor-web-sitesi/","name":"Doktor Web Sitesi Örneği | Cezeri Digital","description":"Doktor ve klinikler için uzmanlık, bilgilendirme ve randevu akışını gösteren canlı web sitesi ön izlemesi.","inLanguage":"tr-TR","isPartOf":{"@id":"https://cezeridigital.com/#website"}},{"@type":"CreativeWork","@id":"https://cezeridigital.com/doktor-web-sitesi/#preview","name":"Doktor web sitesi canlı ön izlemesi","creator":{"@id":"https://cezeridigital.com/#organization"},"about":"Doktor sektörü için web sitesi tasarımı","inLanguage":"tr-TR"},{"@type":"Service","@id":"https://cezeridigital.com/doktor-web-sitesi/#service","name":"Doktor web sitesi tasarımı","provider":{"@id":"https://cezeridigital.com/#organization"},"areaServed":["Türkiye","Online"],"serviceType":"Sektörel web sitesi tasarımı","description":"Doktor ve klinikler için uzmanlık, bilgilendirme ve randevu akışını gösteren canlı web sitesi ön izlemesi."},{"@type":"FAQPage","@id":"https://cezeridigital.com/doktor-web-sitesi/#faq","mainEntity":[{"@type":"Question","name":"Doktor sitesinde nasıl bir dil kullanılmalı?","acceptedAnswer":{"@type":"Answer","text":"Bilgilendirici, sade ve ölçülü bir dil tercih edilmelidir."}},{"@type":"Question","name":"Randevu talebi alınabilir mi?","acceptedAnswer":{"@type":"Answer","text":"Evet. Temel iletişim talebi alınabilir; veri süreçleri ayrıca planlanmalıdır."}}]}]}
-  </script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://cezeridigital.com/doktor-web-sitesi/#webpage","url":"https://cezeridigital.com/doktor-web-sitesi/","name":"Cezeri Doktor Web Sitesi Ön İzlemesi","description":"Doktor ve klinikler için randevu, uzmanlık ve hasta bilgilendirme odaklı web sitesi ön izlemesi.","inLanguage":"tr-TR","isPartOf":{"@id":"https://cezeridigital.com/#website"}},{"@type":"CreativeWork","@id":"https://cezeridigital.com/doktor-web-sitesi/#preview","name":"Cezeri Doktor Web Sitesi Ön İzlemesi","creator":{"@id":"https://cezeridigital.com/#organization"},"about":"Doktor sektörü için web sitesi ön izlemesi","inLanguage":"tr-TR"},{"@type":"Service","@id":"https://cezeridigital.com/doktor-web-sitesi/#service","name":"Doktor web sitesi tasarımı","provider":{"@id":"https://cezeridigital.com/#organization"},"areaServed":["Türkiye","Online"],"serviceType":"Sektörel web sitesi tasarımı","description":"Doktor ve klinikler için randevu, uzmanlık ve hasta bilgilendirme odaklı web sitesi ön izlemesi."}]}</script>
 </head>
-<body style="--accent:#60c8b2;--dark:#0c1716;--light:#effbf8">
-  <div class="cd-preview-bar">
-    <a class="cd-brand" href="../#home">Cezeri Digital</a>
-    <span>Doktor sektörü için canlı web sitesi ön izlemesi</span>
-    <a class="cd-cta" href="../#ai-divan">Benzerini iste</a>
-  </div>
-  <header class="demo-nav">
-    <a class="demo-logo" href="#home">Nova Klinik</a>
-    <nav aria-label="Ön izleme menüsü">
-      <a href="#hizmetler">Hizmetler</a>
-      <a href="#galeri">Galeri</a>
-      <a href="#surec">Süreç</a>
-      <a href="#iletisim">İletişim</a>
-    </nav>
+<body class="premium-preview clinic" style="--accent:#2c9c9b;--ink:#08213a;--paper:#f4fbfb">
+  
+  <div class="cezeri-preview-label"><a href="../on-izlemeler/">Cezeri Digital ön izlemeleri</a><span>Doktor sektörü için hazırlanmış örnek tasarım</span></div>
+  <header class="preview-nav nav-light">
+    <div class="container-xl d-flex align-items-center justify-content-between gap-4">
+      <a class="brand-lockup" href="#anasayfa"><span class="brand-symbol">C</span><span><strong>Cezeri Klinik</strong><small>Doktor web sitesi</small></span></a>
+      <nav class="d-none d-lg-flex align-items-center gap-4"><a href="#surec">Hakkımızda</a><a href="#hizmetlerimiz">Hizmetlerimiz</a><a href="#surec">Hasta Bilgileri</a><a href="#surec">Blog</a><a href="#iletisim">İletişim</a></nav>
+      <a class="preview-nav-btn" href="../#ai-divan">Randevu al</a>
+    </div>
   </header>
-  <main id="home">
-    <section class="preview-hero">
-      <div class="hero-media"><img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1600&q=80" alt="Doktor web sitesi kahraman görseli"></div>
-      <div class="preview-container hero-content">
-        <p class="demo-eyebrow">Doktor web sitesi örneği</p>
-        <h1>Güven veren, sade ve randevu odaklı doktor web sitesi.</h1>
-        <p>Uzmanlık alanları, klinik bilgisi, bilgilendirici içerik ve randevu talebini ölçülü bir dille sunan örnek yapı.</p>
-        <div class="hero-actions">
-          <a class="demo-btn primary" href="#iletisim">Randevu talep et</a>
-          <a class="demo-btn ghost" href="../#ai-divan">Bu tasarım için teklif al</a>
+  <section class="preview-hero premium-clinic" id="anasayfa" style="--accent:#2c9c9b;--ink:#08213a;--paper:#f4fbfb;--hero:url('https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1800&q=85')">
+    <div class="hero-bg"></div>
+    <div class="container-xl hero-inner">
+      <div class="hero-copy">
+        <p class="kicker">Sağlıklı bir yaşam, mutlu bir hayat</p>
+        <h1>Sağlığınız İçin Buradayız</h1>
+        <p>Bilimsel tanı, doğru tedavi ve kişiye özel sağlık çözümleriyle yanınızdayız.</p>
+        <div class="d-flex flex-wrap gap-3 mt-4">
+          <a class="preview-btn primary" href="#hizmetlerimiz">Randevu al</a>
+          <a class="preview-btn ghost" href="../#ai-divan">Hakkımızda</a>
         </div>
       </div>
-    </section>
-    <section class="preview-container stat-row" aria-label="Öne çıkan bilgiler">
-      <strong>KVKK notları</strong><strong>Mobil hızlı</strong><strong>Güven odaklı</strong>
-    </section>
-    <section class="preview-section" id="hizmetler">
-      <div class="preview-container split">
-        <div>
-          <p class="demo-eyebrow">Hizmet vitrini</p>
-          <h2>Ziyaretçi ne sunduğunuzu birkaç saniyede anlar.</h2>
-        </div>
-        <p>Bu ön izleme, sektöre özel karar noktalarını öne çıkaracak şekilde tasarlandı. Görsel kalite, net metin ve hızlı iletişim akışı birlikte çalışır.</p>
+      
+    </div>
+    
+  </section>
+  <section class="container-xl feature-strip shadow-sm">
+    <div class="row g-0"><div class="col-6 col-lg-3 feature-item"><i class="bi bi-heart-pulse"></i><strong>Uzman kadro</strong><span>Profesyonel sunum ve güven veren deneyim.</span></div><div class="col-6 col-lg-3 feature-item"><i class="bi bi-clipboard2-pulse"></i><strong>Doğru tanı</strong><span>Profesyonel sunum ve güven veren deneyim.</span></div><div class="col-6 col-lg-3 feature-item"><i class="bi bi-person-check"></i><strong>Kişiye özel tedavi</strong><span>Profesyonel sunum ve güven veren deneyim.</span></div><div class="col-6 col-lg-3 feature-item"><i class="bi bi-shield-check"></i><strong>Güvenli hizmet</strong><span>Profesyonel sunum ve güven veren deneyim.</span></div></div>
+  </section>
+  <section class="preview-section" id="hizmetlerimiz">
+    <div class="container-xl section-head">
+      <div><p class="kicker">Doktor</p><h2>Size Nasıl Yardımcı Olabiliriz?</h2></div>
+      <a href="../#ai-divan">Benzer site iste <i class="bi bi-arrow-right"></i></a>
+    </div>
+    <div class="container-xl">
+      <div class="row g-4"><div class="col-md-6 col-xl-3"><article class="sector-card h-100">
+          <div class="card-media"><img src="https://images.unsplash.com/photo-1582750433449-648ed127bb54?auto=format&fit=crop&w=900&q=80" alt="İç Hastalıkları"><span>Doktor</span></div>
+          <div class="card-body">
+            <h3>İç Hastalıkları</h3>
+            <p>Kronik hastalıkların tanı ve takip süreçleri.</p>
+            <a href="../#ai-divan">Detaylı incele <i class="bi bi-arrow-right"></i></a>
+          </div>
+        </article></div><div class="col-md-6 col-xl-3"><article class="sector-card h-100">
+          <div class="card-media"><img src="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&w=900&q=80" alt="Hipertansiyon"><span>Doktor</span></div>
+          <div class="card-body">
+            <h3>Hipertansiyon</h3>
+            <p>Tansiyon yüksekliği tanı ve kontrol hizmetleri.</p>
+            <a href="../#ai-divan">Detaylı incele <i class="bi bi-arrow-right"></i></a>
+          </div>
+        </article></div><div class="col-md-6 col-xl-3"><article class="sector-card h-100">
+          <div class="card-media"><img src="https://images.unsplash.com/photo-1666214280557-f1b5022eb634?auto=format&fit=crop&w=900&q=80" alt="Diyabet"><span>Doktor</span></div>
+          <div class="card-body">
+            <h3>Diyabet</h3>
+            <p>Tip 1 ve Tip 2 diyabet takip programları.</p>
+            <a href="../#ai-divan">Detaylı incele <i class="bi bi-arrow-right"></i></a>
+          </div>
+        </article></div><div class="col-md-6 col-xl-3"><article class="sector-card h-100">
+          <div class="card-media"><img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1800&q=85" alt="Check-Up"><span>Doktor</span></div>
+          <div class="card-body">
+            <h3>Check-Up</h3>
+            <p>Detaylı sağlık taramaları ve erken teşhis.</p>
+            <a href="../#ai-divan">Detaylı incele <i class="bi bi-arrow-right"></i></a>
+          </div>
+        </article></div></div>
+    </div>
+  </section>
+  <section class="preview-section showcase-zone" id="galeri">
+    <div class="container-xl showcase-panel">
+      <div class="showcase-copy">
+        <p class="kicker">Sağlığınız, Önceliğimizdir</p>
+        <h2>Kliniğiniz için randevu ve bilgilendirme odaklı güven veren bir site hazırlayalım.</h2>
+        <a class="preview-btn primary" href="../#ai-divan">Projem için teklif al</a>
       </div>
-      <div class="preview-container service-list">
-        <article><span>01</span><h3>Uzmanlık alanları</h3><p>Bu alan, müşterinin aradığı bilgiyi sade biçimde sunar ve iletişim adımına taşır.</p></article><article><span>02</span><h3>Klinik tanıtımı</h3><p>Bu alan, müşterinin aradığı bilgiyi sade biçimde sunar ve iletişim adımına taşır.</p></article><article><span>03</span><h3>Bilgilendirici içerik</h3><p>Bu alan, müşterinin aradığı bilgiyi sade biçimde sunar ve iletişim adımına taşır.</p></article><article><span>04</span><h3>Randevu formu</h3><p>Bu alan, müşterinin aradığı bilgiyi sade biçimde sunar ve iletişim adımına taşır.</p></article>
+      <div class="showcase-mosaic">
+        <img src="https://images.unsplash.com/photo-1582750433449-648ed127bb54?auto=format&fit=crop&w=900&q=80" alt="İç Hastalıkları"><img src="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&w=900&q=80" alt="Hipertansiyon"><img src="https://images.unsplash.com/photo-1666214280557-f1b5022eb634?auto=format&fit=crop&w=900&q=80" alt="Diyabet">
       </div>
-    </section>
-    <section class="preview-section gallery-band" id="galeri">
-      <div class="preview-container split">
-        <div>
-          <p class="demo-eyebrow">Canlı vitrin</p>
-          <h2>Görseller, siteyi sadece anlatan değil gösteren hale getirir.</h2>
-        </div>
-        <p>Her sektör sayfası, gerçek müşterinin inceleyebileceği bir örnek deneyim olarak kurgulanır; yalnızca açıklama metni değildir.</p>
-      </div>
-      <div class="preview-container gallery-grid">
-        <figure><img src="https://images.unsplash.com/photo-1582750433449-648ed127bb54?auto=format&fit=crop&w=900&q=80" alt="Doktor web sitesi galeri görseli 1"><figcaption>Uzmanlık alanları</figcaption></figure><figure><img src="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&w=900&q=80" alt="Doktor web sitesi galeri görseli 2"><figcaption>Hasta bilgilendirme</figcaption></figure><figure><img src="https://images.unsplash.com/photo-1666214280557-f1b5022eb634?auto=format&fit=crop&w=900&q=80" alt="Doktor web sitesi galeri görseli 3"><figcaption>Randevu akışı</figcaption></figure>
-      </div>
-    </section>
-    <section class="preview-section" id="surec">
-      <div class="preview-container process-panel">
-        <div>
-          <p class="demo-eyebrow">Dönüşüm akışı</p>
-          <h2>Ön izleme, gerçek projeye çevrilebilir bir iskelet sunar.</h2>
-        </div>
-        <ol>
-          <li><strong>Keşif</strong><span>Marka, hedef kitle ve sektör ihtiyacı netleşir.</span></li>
-          <li><strong>Tasarım</strong><span>Bu örnek yapı marka renkleri, görseller ve metinlerle özelleştirilir.</span></li>
-          <li><strong>Yayın</strong><span>SEO temeli, ölçüm ve iletişim akışıyla yayına alınır.</span></li>
-        </ol>
-      </div>
-    </section>
-    <section class="preview-section faq-section">
-      <div class="preview-container faq-grid">
-        <article><h3>Doktor sitesinde nasıl bir dil kullanılmalı?</h3><p>Bilgilendirici, sade ve ölçülü bir dil tercih edilmelidir.</p></article><article><h3>Randevu talebi alınabilir mi?</h3><p>Evet. Temel iletişim talebi alınabilir; veri süreçleri ayrıca planlanmalıdır.</p></article>
-      </div>
-    </section>
-    <section class="preview-container contact-panel" id="iletisim">
-      <div>
-        <p class="demo-eyebrow">Proje talebi</p>
-        <h2>Doktor sektörüne uygun web sitesini kendi markanıza uyarlayalım.</h2>
-      </div>
-      <a class="demo-btn primary" href="../#ai-divan">Cezeri AI Divanı ile talep oluştur</a>
-    </section>
-  </main>
-  <footer class="demo-footer">
-    <p>Nova Klinik örnek marka adıyla hazırlanmış Cezeri Digital sektör ön izlemesidir.</p>
-    <a href="../#sektorel-onizlemeler">Tüm ön izlemeler</a>
+    </div>
+  </section>
+  <section class="preview-section compact-section" id="surec">
+    <div class="container-xl">
+      <div class="stats-row"><div><strong>10+ yıl</strong><span>Deneyim</span></div><div><strong>Binlerce</strong><span>Mutlu hasta</span></div><div><strong>Güncel</strong><span>Tedavi yöntemleri</span></div></div>
+      <div class="process-row mt-5"><article><b>01</b><h3>Randevu</h3><p>Akış netleşir, ziyaretçi doğru aksiyona yönlendirilir.</p></article><article><b>02</b><h3>Muayene</h3><p>Akış netleşir, ziyaretçi doğru aksiyona yönlendirilir.</p></article><article><b>03</b><h3>Tanı</h3><p>Akış netleşir, ziyaretçi doğru aksiyona yönlendirilir.</p></article><article><b>04</b><h3>Takip</h3><p>Akış netleşir, ziyaretçi doğru aksiyona yönlendirilir.</p></article></div>
+    </div>
+  </section>
+  <section class="preview-section testimonial-section">
+    <div class="container-xl text-center mb-4"><p class="kicker">Müşteri yorumları</p><h2>Bu tasarım gerçek güven hissi oluşturur.</h2></div>
+    <div class="container-xl row g-4">
+      <div class="col-md-4"><article class="testimonial"><i class="bi bi-quote"></i><p>Tasarım çok düzenli ve güven verici görünüyor.</p><strong>Ayşe K.</strong><span>Doktor müşterisi</span></article></div><div class="col-md-4"><article class="testimonial"><i class="bi bi-quote"></i><p>Hizmetleri incelemek ve iletişime geçmek çok kolay.</p><strong>Mehmet T.</strong><span>Doktor müşterisi</span></article></div><div class="col-md-4"><article class="testimonial"><i class="bi bi-quote"></i><p>Marka algısını güçlendiren profesyonel bir yapı.</p><strong>Elif S.</strong><span>Doktor müşterisi</span></article></div>
+    </div>
+  </section>
+  <footer class="preview-footer" id="iletisim">
+    <div class="container-xl row g-4 align-items-start">
+      <div class="col-lg-4"><a class="brand-lockup mb-3" href="#anasayfa"><span class="brand-symbol">C</span><span><strong>Cezeri Klinik</strong><small>Cezeri Digital ön izlemesi</small></span></a><p>Doktor ve klinikler için randevu, uzmanlık ve hasta bilgilendirme odaklı web sitesi ön izlemesi.</p></div>
+      <div class="col-6 col-lg-2"><h4>Hızlı Linkler</h4><a href="#anasayfa">Ana Sayfa</a><a href="#hizmetlerimiz">Hizmetlerimiz</a><a href="#galeri">Galeri</a></div>
+      <div class="col-6 col-lg-3"><h4>İletişim</h4><p><i class="bi bi-telephone"></i> 0 (212) 123 45 67</p><p><i class="bi bi-envelope"></i> info@cezeridigital.com</p></div>
+      <div class="col-lg-3"><h4>Projeniz için</h4><a class="preview-btn primary w-100" href="../#ai-divan">Talep oluştur</a></div>
+    </div>
   </footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

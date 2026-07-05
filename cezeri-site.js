@@ -27,7 +27,7 @@
     $$('.nav a').forEach((a) => a.addEventListener('click', () => header.classList.remove('open')));
   }
 
-  $$('.nav a, .hero-actions a, .panel-footer a, .footer-inner a, .service-card a, .preview-card a').forEach((a) => {
+  $$('.nav a, .hero-actions a, .panel-footer a, .footer-inner a, .service-card a, .service-card a').forEach((a) => {
     a.addEventListener('click', () => trackEvent('nav_click', { link_text: a.textContent.trim().slice(0, 60), link_url: a.getAttribute('href') || '' }));
   });
 
