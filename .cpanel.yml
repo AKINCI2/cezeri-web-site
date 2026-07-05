@@ -2,10 +2,20 @@
 deployment:
   tasks:
     - export DEPLOYPATH=/home/cezeridi/public_html/
-    - /bin/cp -R index.html cezeri-site.css cezeri-fixes.css cezeri-site.js ai-divan.php lead-notify.php robots.txt sitemap.xml $DEPLOYPATH
+    - /bin/cp -R index.html cezeri-site.css cezeri-fixes.css cezeri-site.js sector-preview.css ai-divan.php lead-notify.php robots.txt sitemap.xml $DEPLOYPATH
     - /bin/cp -R web-tasarim $DEPLOYPATH
     - /bin/cp -R logo-tasarim $DEPLOYPATH
     - /bin/cp -R sosyal-medya-tasarimi $DEPLOYPATH
     - /bin/cp -R video-klip $DEPLOYPATH
     - /bin/cp -R ai-muzik-jingle $DEPLOYPATH
+    - /bin/cp -R organizasyon-web-sitesi $DEPLOYPATH
+    - /bin/cp -R gelinlik-web-sitesi $DEPLOYPATH
+    - /bin/cp -R mobilya-web-sitesi $DEPLOYPATH
+    - /bin/cp -R restoran-web-sitesi $DEPLOYPATH
+    - /bin/cp -R otel-web-sitesi $DEPLOYPATH
+    - /bin/cp -R doktor-web-sitesi $DEPLOYPATH
+    - /bin/cp -R avukat-web-sitesi $DEPLOYPATH
+    - /bin/cp -R emlak-web-sitesi $DEPLOYPATH
+    - /bin/cp -R nakliyat-web-sitesi $DEPLOYPATH
+    - /bin/cp -R guzellik-merkezi-web-sitesi $DEPLOYPATH
     - /bin/cp -R demo $DEPLOYPATH
