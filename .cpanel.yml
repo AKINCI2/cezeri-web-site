@@ -9,6 +9,7 @@ deployment:
     - /bin/cp -R video-klip $DEPLOYPATH
     - /bin/cp -R ai-muzik-jingle $DEPLOYPATH
     - /bin/cp -R on-izlemeler $DEPLOYPATH
+    - /bin/cp -R metropolavm $DEPLOYPATH
     - /bin/cp -R organizasyon-web-sitesi $DEPLOYPATH
     - /bin/cp -R gelinlik-web-sitesi $DEPLOYPATH
     - /bin/cp -R mobilya-web-sitesi $DEPLOYPATH
